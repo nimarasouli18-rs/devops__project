@@ -1,0 +1,3 @@
+NAME                  IMAGE                           COMMAND                  SERVICE   CREATED         STATUS                     PORTS
+04_docker-backend-1   nginx-flask-mysql-backend:1.0   "gunicorn --bind=0.0…"   backend   5 minutes ago   Up 5 minutes (unhealthy)   8000/tcp
+04_docker-db-1        mariadb:10.11.18-jammy          "docker-entrypoint.s…"   db        5 minutes ago   Up 5 minutes (healthy)     3306/tcp
