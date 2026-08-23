@@ -1,0 +1,193 @@
+---
+- name: Prepare Ubuntu server for containerized deployment
+  hosts: deployment_servers
+  become: true
+  gather_facts: true
+
+  vars:
+    deployment_user: "{{ hostvars[inventory_hostname].deployment_user | default(ansible_user) }}"
+    docker_architecture_map:
+      x86_64: amd64
+      aarch64: arm64
+      armv7l: armhf
+    docker_apt_arch: >-
+      {{
+        docker_architecture_map.get(
+          ansible_facts["architecture"],
+          ansible_facts["architecture"]
+        )
+      }}
+    bootstrap_nginx_dir: /opt/bootstrap-nginx
+
+  pre_tasks:
+    - name: Validate the target operating system
+      ansible.builtin.assert:
+        that:
+          - ansible_facts["distribution"] == "Ubuntu"
+          - ansible_facts["distribution_release"] == "jammy"
+        fail_msg: >-
+          This playbook is prepared for Ubuntu 22.04 LTS (Jammy).
+          Detected: {{ ansible_facts["distribution"] }}
+          {{ ansible_facts["distribution_version"] }}.
+        success_msg: "Ubuntu 22.04 LTS (Jammy) detected."
+
+  tasks:
+    - name: Update APT cache and upgrade installed packages
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+        upgrade: dist
+
+    - name: Install essential packages
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - wget
+          - git
+          - vim
+          - htop
+          - ufw
+          - gnupg
+          - python3
+        state: present
+        update_cache: true
+
+    - name: Create the APT keyrings directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Download the official Docker repository signing key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        owner: root
+        group: root
+        mode: "0644"
+        force: true
+
+    - name: Configure the official Docker APT repository
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/docker.sources
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          Types: deb
+          URIs: https://download.docker.com/linux/ubuntu
+          Suites: {{ ansible_facts["distribution_release"] }}
+          Components: stable
+          Architectures: {{ docker_apt_arch }}
+          Signed-By: /etc/apt/keyrings/docker.asc
+
+    - name: Install Docker Engine and Docker Compose plugin
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: true
+
+    - name: Enable and start Docker services
+      ansible.builtin.systemd_service:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop:
+        - containerd
+        - docker
+
+    - name: Add the deployment user to the docker group
+      ansible.builtin.user:
+        name: "{{ deployment_user }}"
+        groups:
+          - docker
+        append: true
+
+    - name: Allow required TCP ports through UFW
+      community.general.ufw:
+        rule: allow
+        port: "{{ item.port }}"
+        proto: tcp
+        comment: "{{ item.comment }}"
+      loop:
+        - { port: "22", comment: "SSH" }
+        - { port: "80", comment: "HTTP for Nginx container" }
+        - { port: "443", comment: "HTTPS for Nginx container" }
+
+    - name: Set the default incoming firewall policy
+      community.general.ufw:
+        direction: incoming
+        default: deny
+
+    - name: Set the default outgoing firewall policy
+      community.general.ufw:
+        direction: outgoing
+        default: allow
+
+    - name: Enable UFW logging
+      community.general.ufw:
+        logging: low
+
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled
+
+    - name: Create the bootstrap Nginx project directory
+      ansible.builtin.file:
+        path: "{{ bootstrap_nginx_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Create the bootstrap Nginx Compose file
+      ansible.builtin.copy:
+        dest: "{{ bootstrap_nginx_dir }}/compose.yml"
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          services:
+            nginx:
+              image: nginx:stable-alpine
+              container_name: bootstrap-nginx
+              restart: unless-stopped
+              ports:
+                - "80:80"
+
+    - name: Start the bootstrap Nginx container with Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ bootstrap_nginx_dir }}"
+        state: present
+        pull: missing
+
+    - name: Wait for Nginx to listen on HTTP port
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 80
+        state: started
+        timeout: 60
+
+    - name: Verify the Nginx HTTP response
+      ansible.builtin.uri:
+        url: http://127.0.0.1/
+        method: GET
+        status_code: 200
+        return_content: false
+
+    - name: Show post-setup notice
+      ansible.builtin.debug:
+        msg:
+          - "Server preparation completed."
+          - "Nginx is running inside the bootstrap-nginx container."
+          - "Log out and reconnect before using Docker without sudo as {{ deployment_user }}."
+          - "The bootstrap Nginx container will be replaced by the final application Compose stack."
+

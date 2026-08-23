@@ -1,0 +1,54 @@
+
+PLAY [Verify prepared deployment server] ***************************************
+
+TASK [Collect Docker, Nginx, service, and firewall information] ****************
+ok: [ubuntu_deploy]
+
+TASK [Display verification results] ********************************************
+ok: [ubuntu_deploy] => {
+    "verification_result.stdout_lines": [
+        "===== Docker Version =====",
+        "Docker version 29.7.2, build a7dcaa6",
+        "",
+        "===== Docker Compose Version =====",
+        "Docker Compose version v5.4.0",
+        "",
+        "===== Nginx Version (inside container) =====",
+        "nginx version: nginx/1.30.4",
+        "",
+        "===== Docker Service Status =====",
+        "Active: active",
+        "Enabled: enabled",
+        "",
+        "===== Containerd Service Status =====",
+        "Active: active",
+        "Enabled: enabled",
+        "",
+        "===== Nginx Container Status =====",
+        "CONTAINER ID   IMAGE                 COMMAND                  CREATED          STATUS          PORTS                                 NAMES",
+        "67a8dd5ef98b   nginx:stable-alpine   \"/docker-entrypoint.…\"   52 seconds ago   Up 50 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp   bootstrap-nginx",
+        "",
+        "===== Docker Compose Project Status =====",
+        "NAME              IMAGE                 COMMAND                  SERVICE   CREATED          STATUS          PORTS",
+        "bootstrap-nginx   nginx:stable-alpine   \"/docker-entrypoint.…\"   nginx     52 seconds ago   Up 50 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp",
+        "",
+        "===== Firewall Status =====",
+        "Status: active",
+        "Logging: on (low)",
+        "Default: deny (incoming), allow (outgoing), deny (routed)",
+        "New profiles: skip",
+        "",
+        "To                         Action      From",
+        "--                         ------      ----",
+        "22/tcp                     ALLOW IN    Anywhere                   # SSH",
+        "80/tcp                     ALLOW IN    Anywhere                   # HTTP for Nginx container",
+        "443/tcp                    ALLOW IN    Anywhere                   # HTTPS for Nginx container",
+        "22/tcp (v6)                ALLOW IN    Anywhere (v6)              # SSH",
+        "80/tcp (v6)                ALLOW IN    Anywhere (v6)              # HTTP for Nginx container",
+        "443/tcp (v6)               ALLOW IN    Anywhere (v6)              # HTTPS for Nginx container"
+    ]
+}
+
+PLAY RECAP *********************************************************************
+ubuntu_deploy              : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

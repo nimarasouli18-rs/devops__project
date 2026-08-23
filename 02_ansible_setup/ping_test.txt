@@ -1,0 +1,4 @@
+ubuntu_deploy | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}

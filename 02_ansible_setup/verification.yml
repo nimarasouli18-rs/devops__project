@@ -1,0 +1,56 @@
+---
+- name: Verify prepared deployment server
+  hosts: deployment_servers
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Collect Docker, Nginx, service, and firewall information
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: |
+          set -e
+
+          echo "===== Docker Version ====="
+          docker --version
+
+          echo
+          echo "===== Docker Compose Version ====="
+          docker compose version
+
+          echo
+          echo "===== Nginx Version (inside container) ====="
+          docker exec bootstrap-nginx nginx -v 2>&1
+
+          echo
+          echo "===== Docker Service Status ====="
+          printf "Active: "
+          systemctl is-active docker
+          printf "Enabled: "
+          systemctl is-enabled docker
+
+          echo
+          echo "===== Containerd Service Status ====="
+          printf "Active: "
+          systemctl is-active containerd
+          printf "Enabled: "
+          systemctl is-enabled containerd
+
+          echo
+          echo "===== Nginx Container Status ====="
+          docker ps --filter name=bootstrap-nginx
+
+          echo
+          echo "===== Docker Compose Project Status ====="
+          docker compose -f /opt/bootstrap-nginx/compose.yml ps
+
+          echo
+          echo "===== Firewall Status ====="
+          ufw status verbose
+      register: verification_result
+      changed_when: false
+
+    - name: Display verification results
+      ansible.builtin.debug:
+        var: verification_result.stdout_lines
+

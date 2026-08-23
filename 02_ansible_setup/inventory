@@ -1,0 +1,2 @@
+[deployment_servers]
+ubuntu_deploy ansible_host=192.168.1.104 ansible_user=daneshkar ansible_port=22 ansible_python_interpreter=/usr/bin/python3 deployment_user=daneshkar
