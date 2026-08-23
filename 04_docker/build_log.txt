@@ -1,0 +1,151 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 599B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile:
+#2 transferring dockerfile: 1.13kB done
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 DONE 4.1s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#4 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 0.0s done
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 0B / 14.14MB 0.2s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 1.05MB / 14.14MB 1.5s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 2.10MB / 14.14MB 2.4s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 3.15MB / 14.14MB 3.5s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 4.19MB / 14.14MB 4.1s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 5.24MB / 14.14MB 5.0s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 6.29MB / 14.14MB 6.6s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 7.34MB / 14.14MB 6.9s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 8.39MB / 14.14MB 7.7s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 9.44MB / 14.14MB 8.6s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 10.49MB / 14.14MB 9.3s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 11.53MB / 14.14MB 10.2s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 12.58MB / 14.14MB 11.4s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 13.63MB / 14.14MB 12.3s
+#4 sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 14.14MB / 14.14MB 12.7s done
+#4 extracting sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed
+#4 extracting sha256:9f624ef51ad55db0ea52d755cc777566386156106fbb4f465eecb22c67ac55ed 0.2s done
+#4 DONE 13.0s
+
+#5 [internal] load metadata for docker.io/library/python:3.12-slim-bookworm
+#5 DONE 1.3s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 218B done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 1.66kB done
+#7 DONE 0.1s
+
+#8 [builder 1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:a116514e19457bcb7af7efe9c3dd0b9b71e85b317694e7882a1c52aa15a78134
+#8 resolve docker.io/library/python:3.12-slim-bookworm@sha256:a116514e19457bcb7af7efe9c3dd0b9b71e85b317694e7882a1c52aa15a78134 0.0s done
+#8 CACHED
+
+#9 [builder 2/4] WORKDIR /build
+#9 DONE 0.1s
+
+#10 [runtime 2/7] RUN groupadd         --gid 10001         appgroup     && useradd         --uid 10001         --gid 10001         --home-dir /app         --no-create-home         --no-log-init         --shell /usr/sbin/nologin         appuser
+#10 ...
+
+#11 [builder 3/4] COPY app/requirements.txt ./requirements.txt
+#11 DONE 0.1s
+
+#10 [runtime 2/7] RUN groupadd         --gid 10001         appgroup     && useradd         --uid 10001         --gid 10001         --home-dir /app         --no-create-home         --no-log-init         --shell /usr/sbin/nologin         appuser
+#10 DONE 0.4s
+
+#12 [builder 4/4] RUN python -m pip wheel     --wheel-dir /wheels     --requirement requirements.txt
+#12 ...
+
+#13 [runtime 3/7] WORKDIR /app
+#13 DONE 0.1s
+
+#12 [builder 4/4] RUN python -m pip wheel     --wheel-dir /wheels     --requirement requirements.txt
+#12 2.185 Collecting Flask==3.1.3 (from -r requirements.txt (line 1))
+#12 3.020   Downloading flask-3.1.3-py3-none-any.whl.metadata (3.2 kB)
+#12 3.447 Collecting mysql-connector-python==9.2.0 (from -r requirements.txt (line 2))
+#12 3.632   Downloading mysql_connector_python-9.2.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (6.0 kB)
+#12 3.848 Collecting gunicorn==23.0.0 (from -r requirements.txt (line 3))
+#12 4.042   Downloading gunicorn-23.0.0-py3-none-any.whl.metadata (4.4 kB)
+#12 4.199 Collecting blinker>=1.9.0 (from Flask==3.1.3->-r requirements.txt (line 1))
+#12 4.324   Downloading blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+#12 4.481 Collecting click>=8.1.3 (from Flask==3.1.3->-r requirements.txt (line 1))
+#12 4.608   Downloading click-8.4.2-py3-none-any.whl.metadata (2.6 kB)
+#12 4.764 Collecting itsdangerous>=2.2.0 (from Flask==3.1.3->-r requirements.txt (line 1))
+#12 4.890   Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+#12 5.035 Collecting jinja2>=3.1.2 (from Flask==3.1.3->-r requirements.txt (line 1))
+#12 5.165   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+#12 5.418 Collecting markupsafe>=2.1.1 (from Flask==3.1.3->-r requirements.txt (line 1))
+#12 5.553   Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+#12 5.722 Collecting werkzeug>=3.1.0 (from Flask==3.1.3->-r requirements.txt (line 1))
+#12 5.856   Downloading werkzeug-3.1.8-py3-none-any.whl.metadata (4.0 kB)
+#12 6.018 Collecting packaging (from gunicorn==23.0.0->-r requirements.txt (line 3))
+#12 6.146   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+#12 6.350 Downloading flask-3.1.3-py3-none-any.whl (103 kB)
+#12 6.741 Downloading mysql_connector_python-9.2.0-cp312-cp312-manylinux_2_28_x86_64.whl (34.0 MB)
+#12 41.61    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.0/34.0 MB 1.1 MB/s eta 0:00:00
+#12 41.84 Downloading gunicorn-23.0.0-py3-none-any.whl (85 kB)
+#12 42.27 Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+#12 42.50 Downloading click-8.4.2-py3-none-any.whl (119 kB)
+#12 42.69 Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+#12 42.89 Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+#12 43.27 Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+#12 43.45 Downloading werkzeug-3.1.8-py3-none-any.whl (226 kB)
+#12 43.82 Downloading packaging-26.3-py3-none-any.whl (129 kB)
+#12 44.02 Saved /wheels/flask-3.1.3-py3-none-any.whl
+#12 44.03 Saved /wheels/mysql_connector_python-9.2.0-cp312-cp312-manylinux_2_28_x86_64.whl
+#12 44.03 Saved /wheels/gunicorn-23.0.0-py3-none-any.whl
+#12 44.03 Saved /wheels/blinker-1.9.0-py3-none-any.whl
+#12 44.03 Saved /wheels/click-8.4.2-py3-none-any.whl
+#12 44.03 Saved /wheels/itsdangerous-2.2.0-py3-none-any.whl
+#12 44.03 Saved /wheels/jinja2-3.1.6-py3-none-any.whl
+#12 44.04 Saved /wheels/markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+#12 44.04 Saved /wheels/werkzeug-3.1.8-py3-none-any.whl
+#12 44.04 Saved /wheels/packaging-26.3-py3-none-any.whl
+#12 DONE 44.2s
+
+#14 [runtime 4/7] COPY --from=builder /wheels /wheels
+#14 DONE 0.1s
+
+#15 [runtime 5/7] COPY app/requirements.txt ./requirements.txt
+#15 DONE 0.1s
+
+#16 [runtime 6/7] RUN python -m pip install     --no-cache-dir     --no-index     --find-links=/wheels     --requirement requirements.txt     && rm -rf /wheels
+#16 1.121 Looking in links: /wheels
+#16 1.125 Processing /wheels/flask-3.1.3-py3-none-any.whl (from -r requirements.txt (line 1))
+#16 1.130 Processing /wheels/mysql_connector_python-9.2.0-cp312-cp312-manylinux_2_28_x86_64.whl (from -r requirements.txt (line 2))
+#16 1.154 Processing /wheels/gunicorn-23.0.0-py3-none-any.whl (from -r requirements.txt (line 3))
+#16 1.158 Processing /wheels/blinker-1.9.0-py3-none-any.whl (from Flask==3.1.3->-r requirements.txt (line 1))
+#16 1.161 Processing /wheels/click-8.4.2-py3-none-any.whl (from Flask==3.1.3->-r requirements.txt (line 1))
+#16 1.163 Processing /wheels/itsdangerous-2.2.0-py3-none-any.whl (from Flask==3.1.3->-r requirements.txt (line 1))
+#16 1.164 Processing /wheels/jinja2-3.1.6-py3-none-any.whl (from Flask==3.1.3->-r requirements.txt (line 1))
+#16 1.166 Processing /wheels/markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (from Flask==3.1.3->-r requirements.txt (line 1))
+#16 1.167 Processing /wheels/werkzeug-3.1.8-py3-none-any.whl (from Flask==3.1.3->-r requirements.txt (line 1))
+#16 1.170 Processing /wheels/packaging-26.3-py3-none-any.whl (from gunicorn==23.0.0->-r requirements.txt (line 3))
+#16 1.186 Installing collected packages: packaging, mysql-connector-python, markupsafe, itsdangerous, click, blinker, werkzeug, jinja2, gunicorn, Flask
+#16 2.117 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#16 2.117 Successfully installed Flask-3.1.3 blinker-1.9.0 click-8.4.2 gunicorn-23.0.0 itsdangerous-2.2.0 jinja2-3.1.6 markupsafe-3.0.3 mysql-connector-python-9.2.0 packaging-26.3 werkzeug-3.1.8
+#16 DONE 2.3s
+
+#17 [runtime 7/7] COPY --chown=appuser:appgroup app/hello.py ./hello.py
+#17 DONE 0.1s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 3.3s done
+#18 exporting manifest sha256:fab7fd5cfa785226f9573b3d413f4c8d83b45d65faa6469ccca647298c3cfb00
+#18 exporting manifest sha256:fab7fd5cfa785226f9573b3d413f4c8d83b45d65faa6469ccca647298c3cfb00 0.0s done
+#18 exporting config sha256:dfccc82f49e5e6b523ada7420c210050a9fbb381ea63078c80457b1442d6e5e9 0.0s done
+#18 exporting attestation manifest sha256:3174da66e12299ef0cb07035b2c23960e18507e0227619fc7653c7cc0c572537 0.0s done
+#18 exporting manifest list sha256:195ccfd1d3f95c4067f63dca6278680e5bc63838b15ae816a15754879bc0eba8 0.0s done
+#18 naming to docker.io/library/nginx-flask-mysql-backend:1.0 done
+#18 unpacking to docker.io/library/nginx-flask-mysql-backend:1.0
+#18 unpacking to docker.io/library/nginx-flask-mysql-backend:1.0 1.3s done
+#18 DONE 4.7s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.0s
