@@ -1,0 +1,17 @@
+.
+├── backend
+│   ├── Dockerfile
+│   ├── hello.py
+│   └── requirements.txt
+├── compose.yaml
+├── container_logs.txt
+├── container_status.txt
+├── db
+│   └── password.txt
+├── proxy
+│   ├── conf
+│   └── Dockerfile
+├── README.md
+└── test_results.txt
+
+4 directories, 11 files
