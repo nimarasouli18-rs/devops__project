@@ -1,51 +1,89 @@
-import os
 from flask import Flask
 import mysql.connector
 
 
 class DBManager:
-    def __init__(self, database='example', host="db", user="root", password_file=None):
-        pf = open(password_file, 'r')
+    def __init__(
+        self,
+        database='example',
+        host='db',
+        user='root',
+        password_file=None
+    ):
+        # Read database password from Docker Secret
+        with open(password_file, 'r') as pf:
+            password = pf.read().strip()
+
+        # Connect to MariaDB
         self.connection = mysql.connector.connect(
-            user=user, 
-            password=pf.read(),
-            host=host, # name of the mysql service as set in the docker compose file
+            user=user,
+            password=password,
+            host=host,
             database=database,
             auth_plugin='mysql_native_password'
         )
-        pf.close()
+
         self.cursor = self.connection.cursor()
-    
+
     def populate_db(self):
         self.cursor.execute('DROP TABLE IF EXISTS blog')
-        self.cursor.execute('CREATE TABLE blog (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255))')
-        self.cursor.executemany('INSERT INTO blog (id, title) VALUES (%s, %s);', [(i, 'Blog post #%d'% i) for i in range (1,5)])
+
+        self.cursor.execute(
+            'CREATE TABLE blog ('
+            'id INT AUTO_INCREMENT PRIMARY KEY, '
+            'title VARCHAR(255)'
+            ')'
+        )
+
+        self.cursor.executemany(
+            'INSERT INTO blog (id, title) VALUES (%s, %s);',
+            [
+                (i, 'Blog post #%d' % i)
+                for i in range(1, 5)
+            ]
+        )
+
         self.connection.commit()
-    
+
     def query_titles(self):
         self.cursor.execute('SELECT title FROM blog')
-        rec = []
-        for c in self.cursor:
-            rec.append(c[0])
-        return rec
+
+        records = []
+
+        for row in self.cursor:
+            records.append(row[0])
+
+        return records
 
 
 server = Flask(__name__)
+
 conn = None
+
 
 @server.route('/')
 def listBlog():
     global conn
+
     if not conn:
-        conn = DBManager(password_file='/run/secrets/db-password')
+        conn = DBManager(
+            password_file='/run/secrets/db-password'
+        )
+
         conn.populate_db()
-    rec = conn.query_titles()
+
+    records = conn.query_titles()
 
     response = ''
-    for c in rec:
-        response = response  + '<div>   Hello  ' + c + '</div>'
+
+    for title in records:
+        response += '<div>Hello ' + title + '</div>'
+
     return response
 
 
 if __name__ == '__main__':
-    server.run()
+    server.run(
+        host='0.0.0.0',
+        port=8000
+    )
