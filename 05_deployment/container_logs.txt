@@ -1,0 +1,176 @@
+db-1       | 2026-08-24 00:47:34+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:10.11.18+maria~ubu2204 started.
+backend-1  | [2026-08-24 00:47:40 +0000] [7] [INFO] Starting gunicorn 23.0.0
+backend-1  | [2026-08-24 00:47:40 +0000] [7] [INFO] Listening at: http://0.0.0.0:8000 (7)
+backend-1  | [2026-08-24 00:47:40 +0000] [7] [INFO] Using worker: sync
+backend-1  | [2026-08-24 00:47:40 +0000] [8] [INFO] Booting worker with pid: 8
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:47:45 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:47:51 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:47:56 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:48:01 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:48:06 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:48:11 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:48:16 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:48:21 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:48:26 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:48:31 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:48:37 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:48:41 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:48:47 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:48:51 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:48:58 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:49:02 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:49:08 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:49:12 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:49:18 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:49:22 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:49:29 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:49:32 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:49:39 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:49:42 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:49:49 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+proxy-1    | /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+proxy-1    | /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+proxy-1    | /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+proxy-1    | 10-listen-on-ipv6-by-default.sh: info: can not modify /etc/nginx/conf.d/default.conf (read-only file system?)
+proxy-1    | /docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+proxy-1    | /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+proxy-1    | /docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+proxy-1    | /docker-entrypoint.sh: Configuration complete; ready for start up
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: using the "epoll" event method
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: nginx/1.30.4
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: built by gcc 15.2.0 (Alpine 15.2.0) 
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: OS: Linux 7.0.0-29-generic
+db-1       | 2026-08-24 00:47:35+00:00 [Warn] [Entrypoint]: /sys/fs/cgroup///memory.pressure not writable, functionality unavailable to MariaDB
+db-1       | 2026-08-24 00:47:35+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+db-1       | 2026-08-24 00:47:35+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:10.11.18+maria~ubu2204 started.
+db-1       | 2026-08-24 00:47:35+00:00 [Note] [Entrypoint]: MariaDB upgrade not required
+db-1       | 2026-08-24  0:47:35 0 [Note] Starting MariaDB 10.11.18-MariaDB-ubu2204 source revision 197f92bee02d8e836f529f37625be69b83e7acbd server_uid J4yfWGlBnPaxmie7u8tAgcIyxBg= as process 1
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: Number of transaction pools: 1
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: Using crc32 + pclmulqdq instructions
+db-1       | 2026-08-24  0:47:35 0 [Warning] mariadbd: io_uring_queue_init() failed with EPERM: sysctl kernel.io_uring_disabled has the value 2, or 1 and the user of the process is not a member of sysctl kernel.io_uring_group. (see man 2 io_uring_setup).
+db-1       | create_uring failed: falling back to libaio
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: Using Linux native AIO
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: innodb_buffer_pool_size_max=8388608m, innodb_buffer_pool_size=128m
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: Completed initialization of buffer pool
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: File system buffers for log disabled (block size=512 bytes)
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: End of log at LSN=53683
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: 128 rollback segments are active.
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: Setting file './ibtmp1' size to 12.000MiB. Physically writing the file full; Please wait ...
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: File './ibtmp1' size is now 12.000MiB.
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: log sequence number 53683; transaction id 36
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: Loading buffer pool(s) from /var/lib/mysql/ib_buffer_pool
+db-1       | 2026-08-24  0:47:35 0 [Note] Plugin 'FEEDBACK' is disabled.
+db-1       | 2026-08-24  0:47:35 0 [Note] InnoDB: Buffer pool(s) load completed at 260824  0:47:35
+db-1       | 2026-08-24  0:47:35 0 [Warning] You need to use --log-bin to make --expire-logs-days or --binlog-expire-logs-seconds work.
+db-1       | 2026-08-24  0:47:35 0 [Note] Server socket created on IP: '0.0.0.0', port: '3306'.
+db-1       | 2026-08-24  0:47:35 0 [Note] Server socket created on IP: '::', port: '3306'.
+db-1       | 2026-08-24  0:47:35 0 [Note] mariadbd: ready for connections.
+db-1       | Version: '10.11.18-MariaDB-ubu2204'  socket: '/run/mysqld/mysqld.sock'  port: 3306  mariadb.org binary distribution
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: getrlimit(RLIMIT_NOFILE): 1024:524288
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: start worker processes
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: start worker process 22
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: start worker process 23
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: start worker process 24
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: start worker process 25
+proxy-1    | 2026/08/24 00:47:46 [notice] 7#7: start worker process 26
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:47:51 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:48:01 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:48:11 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:48:21 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:48:31 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:48:41 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:48:51 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:49:02 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:49:12 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:49:22 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:49:32 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:49:42 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:49:52 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:50:02 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:50:12 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:50:23 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:50:33 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:50:43 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:50:53 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:51:03 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:51:13 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:51:23 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:51:33 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:51:43 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:51:53 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:52:03 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:52:13 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:52:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:52:34 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:52:44 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:52:54 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:53:04 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:53:14 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:53:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:53:34 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:53:44 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:53:54 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:54:04 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:54:14 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:54:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:54:34 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 127.0.0.1 - - [24/Aug/2026:00:54:47 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:49:52 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:50:00 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:50:02 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:50:10 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:50:12 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:50:20 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:50:23 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:50:30 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:50:33 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:50:41 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:50:43 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:50:51 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:50:53 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:51:01 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:51:03 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:51:12 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:51:13 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:51:22 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:51:23 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:51:32 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:51:33 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:51:42 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:51:43 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:51:53 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:51:53 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:52:03 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:52:03 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:52:13 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:52:13 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:52:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:52:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:52:34 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:52:34 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:52:44 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:52:44 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:52:54 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:52:55 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:53:04 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:53:05 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:53:14 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:53:15 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:53:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:53:25 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:53:34 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:53:36 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:53:44 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:53:46 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:53:54 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:53:57 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:54:04 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:54:07 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:54:14 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:54:17 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:54:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:54:28 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:54:34 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 127.0.0.1 - - [24/Aug/2026:00:54:38 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 172.19.0.3 - - [24/Aug/2026:00:54:47 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
