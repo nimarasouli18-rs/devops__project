@@ -1,0 +1,168 @@
+---
+- name: Collect deployment verification results
+  hosts: deployment_servers
+  become: true
+  gather_facts: false
+
+  vars:
+    deployment_dir: /opt/nginx-flask-mysql
+    generated_at: "{{ lookup('ansible.builtin.pipe', 'date --iso-8601=seconds') }}"
+
+  tasks:
+    - name: Collect Docker Compose container status
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - ps
+          - --all
+        chdir: "{{ deployment_dir }}"
+      register: compose_status
+      changed_when: false
+
+    - name: Collect recent container logs
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - logs
+          - --no-color
+          - --timestamps
+          - --tail
+          - "100"
+        chdir: "{{ deployment_dir }}"
+      register: compose_logs
+      changed_when: false
+
+    - name: Test application from deployment server
+      ansible.builtin.uri:
+        url: http://127.0.0.1/
+        method: GET
+        status_code: 200
+        return_content: true
+      register: server_http_test
+
+    - name: Test application from Ansible Controller
+      ansible.builtin.uri:
+        url: "http://{{ ansible_host }}/"
+        method: GET
+        status_code: 200
+        return_content: true
+      register: controller_http_test
+      delegate_to: localhost
+      become: false
+
+    - name: Write container status file on Controller
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/container_status.txt"
+        mode: "0644"
+        content: |
+          ========================================
+          Docker Compose Container Status
+          ========================================
+
+          Generated at: {{ generated_at }}
+          Deployment server: {{ ansible_host }}
+          Deployment directory: {{ deployment_dir }}
+
+          {{ compose_status.stdout }}
+
+          {% if compose_status.stderr | length > 0 %}
+          Standard error:
+          {{ compose_status.stderr }}
+          {% endif %}
+      delegate_to: localhost
+      become: false
+
+    - name: Write container logs file on Controller
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/container_logs.txt"
+        mode: "0644"
+        content: |
+          ========================================
+          Docker Compose Container Logs
+          ========================================
+
+          Generated at: {{ generated_at }}
+          Deployment server: {{ ansible_host }}
+
+          {{ compose_logs.stdout }}
+
+          {% if compose_logs.stderr | length > 0 %}
+          Standard error:
+          {{ compose_logs.stderr }}
+          {% endif %}
+      delegate_to: localhost
+      become: false
+
+    - name: Write application test results on Controller
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/test_results.txt"
+        mode: "0644"
+        content: |
+          ========================================
+          Application Deployment Test Results
+          ========================================
+
+          Generated at: {{ generated_at }}
+          Deployment server: {{ ansible_host }}
+
+          ----------------------------------------
+          Test 1: From Deployment Server
+          ----------------------------------------
+
+          URL:
+          http://127.0.0.1/
+
+          HTTP Status:
+          {{ server_http_test.status }}
+
+          Response:
+          {{ server_http_test.content }}
+
+          Result:
+          {% if server_http_test.status == 200 %}
+          PASSED
+          {% else %}
+          FAILED
+          {% endif %}
+
+          ----------------------------------------
+          Test 2: From Ansible Controller
+          ----------------------------------------
+
+          URL:
+          http://{{ ansible_host }}/
+
+          HTTP Status:
+          {{ controller_http_test.status }}
+
+          Response:
+          {{ controller_http_test.content }}
+
+          Result:
+          {% if controller_http_test.status == 200 %}
+          PASSED
+          {% else %}
+          FAILED
+          {% endif %}
+
+          ----------------------------------------
+          Final Result
+          ----------------------------------------
+
+          {% if server_http_test.status == 200 and controller_http_test.status == 200 %}
+          Application deployment test: PASSED
+          {% else %}
+          Application deployment test: FAILED
+          {% endif %}
+      delegate_to: localhost
+      become: false

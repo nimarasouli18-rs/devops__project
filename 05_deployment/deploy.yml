@@ -1,0 +1,287 @@
+---
+- name: Deploy Nginx Flask MariaDB application
+  hosts: deployment_servers
+  become: true
+  gather_facts: false
+
+  vars:
+    deployment_dir: /opt/nginx-flask-mysql
+
+    deployment_user: rahmati
+    deployment_group: rahmati
+
+    secret_group: appcontainer
+    secret_gid: 10001
+
+  tasks:
+    - name: Ensure OpenSSL is installed
+      ansible.builtin.apt:
+        name: openssl
+        state: present
+        update_cache: true
+
+    - name: Verify Docker Compose installation
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - version
+      register: docker_compose_version
+      changed_when: false
+
+    - name: Display Docker Compose version
+      ansible.builtin.debug:
+        var: docker_compose_version.stdout_lines
+
+    - name: Create host group matching the backend container GID
+      ansible.builtin.group:
+        name: "{{ secret_group }}"
+        gid: "{{ secret_gid }}"
+        state: present
+
+    - name: Create application directories
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - path: "{{ deployment_dir }}"
+          owner: "{{ deployment_user }}"
+          group: "{{ deployment_group }}"
+          mode: "0755"
+
+        - path: "{{ deployment_dir }}/app"
+          owner: "{{ deployment_user }}"
+          group: "{{ deployment_group }}"
+          mode: "0755"
+
+        - path: "{{ deployment_dir }}/nginx"
+          owner: "{{ deployment_user }}"
+          group: "{{ deployment_group }}"
+          mode: "0755"
+
+        - path: "{{ deployment_dir }}/secrets"
+          owner: root
+          group: "{{ secret_group }}"
+          mode: "0750"
+
+    - name: Copy application deployment files
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../04_docker/{{ item.src }}"
+        dest: "{{ deployment_dir }}/{{ item.dest }}"
+        owner: "{{ deployment_user }}"
+        group: "{{ deployment_group }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - src: Dockerfile
+          dest: Dockerfile
+          mode: "0644"
+
+        - src: .dockerignore
+          dest: .dockerignore
+          mode: "0644"
+
+        - src: docker-compose.yml
+          dest: docker-compose.yml
+          mode: "0644"
+
+        - src: .env.example
+          dest: .env.example
+          mode: "0644"
+
+        - src: app/hello.py
+          dest: app/hello.py
+          mode: "0644"
+
+        - src: app/requirements.txt
+          dest: app/requirements.txt
+          mode: "0644"
+
+        - src: nginx/default.conf
+          dest: nginx/default.conf
+          mode: "0644"
+
+    - name: Create deployment environment file
+      ansible.builtin.copy:
+        dest: "{{ deployment_dir }}/.env"
+        owner: "{{ deployment_user }}"
+        group: "{{ deployment_group }}"
+        mode: "0640"
+        content: |
+          COMPOSE_PROJECT_NAME=nginx-flask-mysql
+          HTTP_PORT=80
+          MARIADB_IMAGE=mariadb:10.11.18-jammy
+          MARIADB_DATABASE=example
+          NGINX_IMAGE=nginx:1.30.4-alpine
+
+    - name: Check whether database password already exists
+      ansible.builtin.stat:
+        path: "{{ deployment_dir }}/secrets/db_password.txt"
+      register: database_password_file
+
+    - name: Generate database password
+      ansible.builtin.command:
+        argv:
+          - /usr/bin/openssl
+          - rand
+          - -hex
+          - "24"
+      register: generated_database_password
+      changed_when: true
+      when: not database_password_file.stat.exists
+      no_log: true
+
+    - name: Create database password file
+      ansible.builtin.copy:
+        dest: "{{ deployment_dir }}/secrets/db_password.txt"
+        content: "{{ generated_database_password.stdout }}"
+        owner: root
+        group: "{{ secret_group }}"
+        mode: "0640"
+      when: not database_password_file.stat.exists
+      no_log: true
+
+    - name: Enforce database password permissions
+      ansible.builtin.file:
+        path: "{{ deployment_dir }}/secrets/db_password.txt"
+        state: file
+        owner: root
+        group: "{{ secret_group }}"
+        mode: "0640"
+
+    - name: Validate Docker Compose configuration
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - config
+          - --quiet
+        chdir: "{{ deployment_dir }}"
+      changed_when: false
+
+    - name: Pull MariaDB and Nginx images
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - pull
+          - db
+          - proxy
+        chdir: "{{ deployment_dir }}"
+      register: compose_pull
+      changed_when: true
+
+    - name: Display image pull output
+      ansible.builtin.debug:
+        msg:
+          - "{{ compose_pull.stdout | default('') }}"
+          - "{{ compose_pull.stderr | default('') }}"
+
+    - name: Build backend image
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - --progress
+          - plain
+          - build
+          - backend
+        chdir: "{{ deployment_dir }}"
+      register: compose_build
+      changed_when: true
+
+    - name: Display backend build output
+      ansible.builtin.debug:
+        msg:
+          - "{{ compose_build.stdout | default('') }}"
+          - "{{ compose_build.stderr | default('') }}"
+
+    - name: Check bootstrap Nginx Compose file
+      ansible.builtin.stat:
+        path: /opt/bootstrap-nginx/compose.yml
+      register: bootstrap_nginx_compose
+
+    - name: Stop and remove bootstrap Nginx container
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - -f
+          - /opt/bootstrap-nginx/compose.yml
+          - down
+          - --remove-orphans
+      when: bootstrap_nginx_compose.stat.exists
+      register: bootstrap_nginx_down
+      changed_when: true
+
+    - name: Start final application stack
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - up
+          - --detach
+          - --wait
+          - --wait-timeout
+          - "180"
+          - --remove-orphans
+        chdir: "{{ deployment_dir }}"
+      register: compose_up
+      changed_when: true
+
+    - name: Display Compose startup output
+      ansible.builtin.debug:
+        msg:
+          - "{{ compose_up.stdout | default('') }}"
+          - "{{ compose_up.stderr | default('') }}"
+
+    - name: Read container status
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - ps
+          - --all
+        chdir: "{{ deployment_dir }}"
+      register: compose_status
+      changed_when: false
+
+    - name: Display container status
+      ansible.builtin.debug:
+        var: compose_status.stdout_lines
+
+    - name: Test application from deployment server
+      ansible.builtin.uri:
+        url: http://127.0.0.1/
+        method: GET
+        status_code: 200
+        return_content: true
+      register: deployment_http_test
+
+    - name: Display HTTP test result
+      ansible.builtin.debug:
+        msg:
+          - "HTTP status: {{ deployment_http_test.status }}"
+          - "Response: {{ deployment_http_test.content }}"
