@@ -1,0 +1,252 @@
+========================================
+Ansible Automation Verification
+========================================
+
+Generated at:
+2026-08-21T20:25:31+03:30
+
+Deployment server:
+192.168.200.54
+
+Domain:
+myapp.test
+
+----------------------------------------
+Container Status
+----------------------------------------
+
+NAME                          IMAGE                           COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+nginx-flask-mysql-backend-1   nginx-flask-mysql-backend:1.0   "gunicorn --bind=0.0…"   backend   58 seconds ago   Up 55 seconds (healthy)   8000/tcp
+nginx-flask-mysql-db-1        mariadb:10.11.18-jammy          "docker-entrypoint.s…"   db        32 hours ago     Up 32 hours (healthy)     3306/tcp
+nginx-flask-mysql-proxy-1     nginx:1.30.4-alpine             "/docker-entrypoint.…"   proxy     18 seconds ago   Up 16 seconds (healthy)   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+
+----------------------------------------
+Nginx Configuration Test
+----------------------------------------
+
+
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+----------------------------------------
+Certificate Information
+----------------------------------------
+
+subject=C = AZ, ST = Baku, L = Baku, O = DevOps Lab, OU = Training, CN = myapp.test
+issuer=C = AZ, ST = Baku, L = Baku, O = DevOps Lab, OU = Training, CN = myapp.test
+serial=5FB597ECA76A2A2911027BEC3B62EF7835AE6CEF
+notBefore=Aug 21 11:53:23 2026 GMT
+notAfter=Aug 21 11:53:23 2027 GMT
+sha256 Fingerprint=6A:2E:65:C2:D1:D0:51:DA:34:F2:3B:48:F6:28:89:F0:98:17:BC:96:88:B8:11:AA:50:97:52:DB:0B:8B:DD:D0
+X509v3 Subject Alternative Name: 
+    DNS:myapp.test, IP Address:192.168.200.54
+
+----------------------------------------
+HTTP Redirect Test on Ubuntu
+----------------------------------------
+
+Status: 301
+Location: https://myapp.test/
+Result: PASSED
+
+----------------------------------------
+HTTPS Test on Ubuntu
+----------------------------------------
+
+Status: 200
+Response:
+<div>   Hello  Blog post #1</div><div>   Hello  Blog post #2</div><div>   Hello  Blog post #3</div><div>   Hello  Blog post #4</div>
+Result: PASSED
+
+----------------------------------------
+HTTP Redirect Test from AlmaLinux Controller
+----------------------------------------
+
+HTTP/1.1 301 Moved Permanently
+Server: nginx
+Date: Fri, 21 Aug 2026 16:55:30 GMT
+Content-Type: text/html
+Content-Length: 162
+Connection: keep-alive
+Location: https://myapp.test/
+
+----------------------------------------
+HTTPS Test from AlmaLinux Controller
+----------------------------------------
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 21 Aug 2026 16:55:30 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 132
+Connection: keep-alive
+
+<div>   Hello  Blog post #1</div><div>   Hello  Blog post #2</div><div>   Hello  Blog post #3</div><div>   Hello  Blog post #4</div>
+
+----------------------------------------
+Follow Redirect Test from Controller
+----------------------------------------
+
+HTTP/1.1 301 Moved Permanently
+Server: nginx
+Date: Fri, 21 Aug 2026 16:55:31 GMT
+Content-Type: text/html
+Content-Length: 162
+Connection: keep-alive
+Location: https://myapp.test/
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 21 Aug 2026 16:55:31 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 132
+Connection: keep-alive
+
+<div>   Hello  Blog post #1</div><div>   Hello  Blog post #2</div><div>   Hello  Blog post #3</div><div>   Hello  Blog post #4</div>
+
+----------------------------------------
+Recent Container Logs
+----------------------------------------
+
+backend-1  | 2026-08-21T16:54:29.071296272Z [2026-08-21 16:54:29 +0000] [7] [INFO] Starting gunicorn 23.0.0
+backend-1  | 2026-08-21T16:54:29.071735597Z [2026-08-21 16:54:29 +0000] [7] [INFO] Listening at: http://0.0.0.0:8000 (7)
+backend-1  | 2026-08-21T16:54:29.071756623Z [2026-08-21 16:54:29 +0000] [7] [INFO] Using worker: sync
+backend-1  | 2026-08-21T16:54:29.080520451Z [2026-08-21 16:54:29 +0000] [8] [INFO] Booting worker with pid: 8
+backend-1  | 2026-08-21T16:54:33.908422559Z 127.0.0.1 - - [21/Aug/2026:16:54:33 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-21T16:54:37.143349481Z 127.0.0.1 - - [21/Aug/2026:16:54:37 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-21T16:54:44.664593541Z 127.0.0.1 - - [21/Aug/2026:16:54:44 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-21T16:54:55.363624622Z 127.0.0.1 - - [21/Aug/2026:16:54:55 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-21T16:55:06.197868156Z 127.0.0.1 - - [21/Aug/2026:16:55:06 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-21T16:55:16.906904860Z 127.0.0.1 - - [21/Aug/2026:16:55:16 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+db-1       | 2026-08-20T09:09:53.223143618Z 2026-08-20 09:09:53+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:10.11.18+maria~ubu2204 started.
+db-1       | 2026-08-20T09:09:54.020750169Z 2026-08-20 09:09:54+00:00 [Warn] [Entrypoint]: /sys/fs/cgroup///memory.pressure not writable, functionality unavailable to MariaDB
+db-1       | 2026-08-20T09:09:54.036046811Z 2026-08-20 09:09:54+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+db-1       | 2026-08-20T09:09:54.075749158Z 2026-08-20 09:09:54+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:10.11.18+maria~ubu2204 started.
+db-1       | 2026-08-20T09:09:54.777436366Z 2026-08-20 09:09:54+00:00 [Note] [Entrypoint]: Initializing database files
+db-1       | 2026-08-20T09:09:55.061338472Z 2026-08-20  9:09:55 0 [Warning] mariadbd: io_uring_queue_init() failed with EPERM: sysctl kernel.io_uring_disabled has the value 2, or 1 and the user of the process is not a member of sysctl kernel.io_uring_group. (see man 2 io_uring_setup).
+db-1       | 2026-08-20T09:09:55.061424776Z create_uring failed: falling back to libaio
+db-1       | 2026-08-20T09:09:56.366460688Z 2026-08-20 09:09:56+00:00 [Note] [Entrypoint]: Database files initialized
+db-1       | 2026-08-20T09:09:56.373230733Z 2026-08-20 09:09:56+00:00 [Note] [Entrypoint]: Starting temporary server
+db-1       | 2026-08-20T09:09:56.382971885Z 2026-08-20 09:09:56+00:00 [Note] [Entrypoint]: Waiting for server startup
+db-1       | 2026-08-20T09:09:56.431090985Z 2026-08-20  9:09:56 0 [Note] Starting MariaDB 10.11.18-MariaDB-ubu2204 source revision 197f92bee02d8e836f529f37625be69b83e7acbd server_uid 2Cxf39QKVykO/fYSTLeqWM5Khl0= as process 95
+db-1       | 2026-08-20T09:09:56.532290574Z 2026-08-20  9:09:56 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+db-1       | 2026-08-20T09:09:56.537026878Z 2026-08-20  9:09:56 0 [Note] InnoDB: Number of transaction pools: 1
+db-1       | 2026-08-20T09:09:56.537048824Z 2026-08-20  9:09:56 0 [Note] InnoDB: Using crc32 + pclmulqdq instructions
+db-1       | 2026-08-20T09:09:56.537058187Z 2026-08-20  9:09:56 0 [Note] mariadbd: O_TMPFILE is not supported on /tmp (disabling future attempts)
+db-1       | 2026-08-20T09:09:56.537329691Z 2026-08-20  9:09:56 0 [Warning] mariadbd: io_uring_queue_init() failed with EPERM: sysctl kernel.io_uring_disabled has the value 2, or 1 and the user of the process is not a member of sysctl kernel.io_uring_group. (see man 2 io_uring_setup).
+db-1       | 2026-08-20T09:09:56.537415810Z create_uring failed: falling back to libaio
+db-1       | 2026-08-20T09:09:56.537650922Z 2026-08-20  9:09:56 0 [Note] InnoDB: Using Linux native AIO
+db-1       | 2026-08-20T09:09:56.539272327Z 2026-08-20  9:09:56 0 [Note] InnoDB: innodb_buffer_pool_size_max=8388608m, innodb_buffer_pool_size=128m
+db-1       | 2026-08-20T09:09:56.541199502Z 2026-08-20  9:09:56 0 [Note] InnoDB: Completed initialization of buffer pool
+db-1       | 2026-08-20T09:09:56.542820329Z 2026-08-20  9:09:56 0 [Note] InnoDB: File system buffers for log disabled (block size=512 bytes)
+db-1       | 2026-08-20T09:09:56.582684462Z 2026-08-20  9:09:56 0 [Note] InnoDB: End of log at LSN=44894
+db-1       | 2026-08-20T09:09:56.621852715Z 2026-08-20  9:09:56 0 [Note] InnoDB: 128 rollback segments are active.
+db-1       | 2026-08-20T09:09:56.622867153Z 2026-08-20  9:09:56 0 [Note] InnoDB: Setting file './ibtmp1' size to 12.000MiB. Physically writing the file full; Please wait ...
+db-1       | 2026-08-20T09:09:56.623079385Z 2026-08-20  9:09:56 0 [Note] InnoDB: File './ibtmp1' size is now 12.000MiB.
+db-1       | 2026-08-20T09:09:56.632197839Z 2026-08-20  9:09:56 0 [Note] InnoDB: log sequence number 44894; transaction id 14
+db-1       | 2026-08-20T09:09:56.632470159Z 2026-08-20  9:09:56 0 [Note] Plugin 'FEEDBACK' is disabled.
+db-1       | 2026-08-20T09:09:56.656236268Z 2026-08-20  9:09:56 0 [Note] mariadbd: ready for connections.
+db-1       | 2026-08-20T09:09:56.656316184Z Version: '10.11.18-MariaDB-ubu2204'  socket: '/run/mysqld/mysqld.sock'  port: 0  mariadb.org binary distribution
+db-1       | 2026-08-20T09:09:57.465320059Z 2026-08-20 09:09:57+00:00 [Note] [Entrypoint]: Temporary server started.
+db-1       | 2026-08-20T09:10:02.500995537Z 2026-08-20 09:10:02+00:00 [Note] [Entrypoint]: Creating database example
+db-1       | 2026-08-20T09:10:02.506848259Z 2026-08-20 09:10:02+00:00 [Note] [Entrypoint]: Securing system users (equivalent to running mysql_secure_installation)
+db-1       | 2026-08-20T09:10:02.552869769Z 
+db-1       | 2026-08-20T09:10:02.558966091Z 2026-08-20 09:10:02+00:00 [Note] [Entrypoint]: Stopping temporary server
+db-1       | 2026-08-20T09:10:02.559276369Z 2026-08-20  9:10:02 0 [Note] mariadbd (initiated by: unknown): Normal shutdown
+db-1       | 2026-08-20T09:10:02.559893577Z 2026-08-20  9:10:02 0 [Note] InnoDB: FTS optimize thread exiting.
+db-1       | 2026-08-20T09:10:02.605827930Z 2026-08-20  9:10:02 0 [Note] InnoDB: Starting shutdown...
+db-1       | 2026-08-20T09:10:02.606067754Z 2026-08-20  9:10:02 0 [Note] InnoDB: Dumping buffer pool(s) to /var/lib/mysql/ib_buffer_pool
+db-1       | 2026-08-20T09:10:02.607055224Z 2026-08-20  9:10:02 0 [Note] InnoDB: Buffer pool(s) dump completed at 260820  9:10:02
+db-1       | 2026-08-20T09:10:02.660099240Z 2026-08-20  9:10:02 0 [Note] InnoDB: Removed temporary tablespace data file: "./ibtmp1"
+db-1       | 2026-08-20T09:10:02.660160799Z 2026-08-20  9:10:02 0 [Note] Shutdown completed; log sequence number 44894; transaction id 15
+db-1       | 2026-08-20T09:10:02.683066021Z 2026-08-20  9:10:02 0 [Note] mariadbd: Shutdown complete
+db-1       | 2026-08-20T09:10:02.711680840Z 2026-08-20 09:10:02+00:00 [Note] [Entrypoint]: Temporary server stopped
+db-1       | 2026-08-20T09:10:02.711756449Z 
+db-1       | 2026-08-20T09:10:02.719438395Z 2026-08-20 09:10:02+00:00 [Note] [Entrypoint]: MariaDB init process done. Ready for start up.
+db-1       | 2026-08-20T09:10:02.719498868Z 
+db-1       | 2026-08-20T09:10:02.788167845Z 2026-08-20  9:10:02 0 [Note] Starting MariaDB 10.11.18-MariaDB-ubu2204 source revision 197f92bee02d8e836f529f37625be69b83e7acbd server_uid 2Cxf39QKVykO/fYSTLeqWM5Khl0= as process 1
+db-1       | 2026-08-20T09:10:02.912224974Z 2026-08-20  9:10:02 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+db-1       | 2026-08-20T09:10:02.923167973Z 2026-08-20  9:10:02 0 [Note] InnoDB: Number of transaction pools: 1
+db-1       | 2026-08-20T09:10:02.923218230Z 2026-08-20  9:10:02 0 [Note] InnoDB: Using crc32 + pclmulqdq instructions
+db-1       | 2026-08-20T09:10:02.923264956Z 2026-08-20  9:10:02 0 [Note] mariadbd: O_TMPFILE is not supported on /tmp (disabling future attempts)
+db-1       | 2026-08-20T09:10:02.923857949Z 2026-08-20  9:10:02 0 [Warning] mariadbd: io_uring_queue_init() failed with EPERM: sysctl kernel.io_uring_disabled has the value 2, or 1 and the user of the process is not a member of sysctl kernel.io_uring_group. (see man 2 io_uring_setup).
+db-1       | 2026-08-20T09:10:02.924091391Z create_uring failed: falling back to libaio
+db-1       | 2026-08-20T09:10:02.924588376Z 2026-08-20  9:10:02 0 [Note] InnoDB: Using Linux native AIO
+db-1       | 2026-08-20T09:10:02.928136807Z 2026-08-20  9:10:02 0 [Note] InnoDB: innodb_buffer_pool_size_max=8388608m, innodb_buffer_pool_size=128m
+db-1       | 2026-08-20T09:10:02.933230188Z 2026-08-20  9:10:02 0 [Note] InnoDB: Completed initialization of buffer pool
+db-1       | 2026-08-20T09:10:02.937485546Z 2026-08-20  9:10:02 0 [Note] InnoDB: File system buffers for log disabled (block size=512 bytes)
+db-1       | 2026-08-20T09:10:03.022431860Z 2026-08-20  9:10:03 0 [Note] InnoDB: End of log at LSN=44894
+db-1       | 2026-08-20T09:10:03.053798433Z 2026-08-20  9:10:03 0 [Note] InnoDB: 128 rollback segments are active.
+db-1       | 2026-08-20T09:10:03.054237980Z 2026-08-20  9:10:03 0 [Note] InnoDB: Setting file './ibtmp1' size to 12.000MiB. Physically writing the file full; Please wait ...
+db-1       | 2026-08-20T09:10:03.054260973Z 2026-08-20  9:10:03 0 [Note] InnoDB: File './ibtmp1' size is now 12.000MiB.
+db-1       | 2026-08-20T09:10:03.057002107Z 2026-08-20  9:10:03 0 [Note] InnoDB: log sequence number 44894; transaction id 14
+db-1       | 2026-08-20T09:10:03.057199936Z 2026-08-20  9:10:03 0 [Note] Plugin 'FEEDBACK' is disabled.
+db-1       | 2026-08-20T09:10:03.057269779Z 2026-08-20  9:10:03 0 [Note] InnoDB: Loading buffer pool(s) from /var/lib/mysql/ib_buffer_pool
+db-1       | 2026-08-20T09:10:03.058916084Z 2026-08-20  9:10:03 0 [Warning] You need to use --log-bin to make --expire-logs-days or --binlog-expire-logs-seconds work.
+db-1       | 2026-08-20T09:10:03.058942391Z 2026-08-20  9:10:03 0 [Note] InnoDB: Buffer pool(s) load completed at 260820  9:10:03
+db-1       | 2026-08-20T09:10:03.062795914Z 2026-08-20  9:10:03 0 [Note] Server socket created on IP: '0.0.0.0', port: '3306'.
+db-1       | 2026-08-20T09:10:03.062826270Z 2026-08-20  9:10:03 0 [Note] Server socket created on IP: '::', port: '3306'.
+db-1       | 2026-08-20T09:10:03.073500881Z 2026-08-20  9:10:03 0 [Note] mariadbd: ready for connections.
+db-1       | 2026-08-20T09:10:03.073522468Z Version: '10.11.18-MariaDB-ubu2204'  socket: '/run/mysqld/mysqld.sock'  port: 3306  mariadb.org binary distribution
+backend-1  | 2026-08-21T16:55:20.486754056Z 172.19.0.3 - - [21/Aug/2026:16:55:20 +0000] "GET / HTTP/1.1" 200 132 "-" "ansible-httpget"
+proxy-1    | 2026-08-21T16:55:07.692816497Z /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+proxy-1    | 2026-08-21T16:55:07.692902665Z /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+proxy-1    | 2026-08-21T16:55:07.696662594Z /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+proxy-1    | 2026-08-21T16:55:07.701859656Z 10-listen-on-ipv6-by-default.sh: info: /etc/nginx/conf.d/default.conf is not a file or does not exist
+proxy-1    | 2026-08-21T16:55:07.703090155Z /docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+proxy-1    | 2026-08-21T16:55:07.704395816Z /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+proxy-1    | 2026-08-21T16:55:07.717027619Z /docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+proxy-1    | 2026-08-21T16:55:07.722644636Z /docker-entrypoint.sh: Configuration complete; ready for start up
+proxy-1    | 2026-08-21T16:55:07.756088306Z 2026/08/21 16:55:07 [notice] 8#8: using the "epoll" event method
+proxy-1    | 2026-08-21T16:55:07.756158152Z 2026/08/21 16:55:07 [notice] 8#8: nginx/1.30.4
+proxy-1    | 2026-08-21T16:55:07.756180312Z 2026/08/21 16:55:07 [notice] 8#8: built by gcc 15.2.0 (Alpine 15.2.0) 
+proxy-1    | 2026-08-21T16:55:07.756200578Z 2026/08/21 16:55:07 [notice] 8#8: OS: Linux 5.15.0-187-generic
+proxy-1    | 2026-08-21T16:55:07.756220613Z 2026/08/21 16:55:07 [notice] 8#8: getrlimit(RLIMIT_NOFILE): 1024:524288
+proxy-1    | 2026-08-21T16:55:07.756849126Z 2026/08/21 16:55:07 [notice] 8#8: start worker processes
+proxy-1    | 2026-08-21T16:55:07.757341871Z 2026/08/21 16:55:07 [notice] 8#8: start worker process 22
+proxy-1    | 2026-08-21T16:55:07.758008646Z 2026/08/21 16:55:07 [notice] 8#8: start worker process 23
+proxy-1    | 2026-08-21T16:55:07.758583680Z 2026/08/21 16:55:07 [notice] 8#8: start worker process 24
+proxy-1    | 2026-08-21T16:55:07.759177563Z 2026/08/21 16:55:07 [notice] 8#8: start worker process 25
+proxy-1    | 2026-08-21T16:55:16.883674979Z 2026/08/21 16:55:16 [notice] 8#8: signal 1 (SIGHUP) received from 40, reconfiguring
+proxy-1    | 2026-08-21T16:55:16.883714362Z 2026/08/21 16:55:16 [notice] 8#8: reconfiguring
+proxy-1    | 2026-08-21T16:55:16.888095573Z 2026/08/21 16:55:16 [notice] 8#8: using the "epoll" event method
+proxy-1    | 2026-08-21T16:55:16.888123823Z 2026/08/21 16:55:16 [notice] 8#8: start worker processes
+proxy-1    | 2026-08-21T16:55:16.888134889Z 2026/08/21 16:55:16 [notice] 8#8: start worker process 46
+proxy-1    | 2026-08-21T16:55:16.890390717Z 2026/08/21 16:55:16 [notice] 8#8: start worker process 47
+proxy-1    | 2026-08-21T16:55:16.890921007Z 2026/08/21 16:55:16 [notice] 8#8: start worker process 48
+proxy-1    | 2026-08-21T16:55:16.891564683Z 2026/08/21 16:55:16 [notice] 8#8: start worker process 49
+proxy-1    | 2026-08-21T16:55:16.997763909Z 2026/08/21 16:55:16 [notice] 24#24: gracefully shutting down
+proxy-1    | 2026-08-21T16:55:16.997840894Z 2026/08/21 16:55:16 [notice] 22#22: gracefully shutting down
+proxy-1    | 2026-08-21T16:55:16.997860752Z 2026/08/21 16:55:16 [notice] 23#23: gracefully shutting down
+proxy-1    | 2026-08-21T16:55:16.997877089Z 2026/08/21 16:55:16 [notice] 25#25: gracefully shutting down
+proxy-1    | 2026-08-21T16:55:16.997927867Z 2026/08/21 16:55:16 [notice] 22#22: exiting
+proxy-1    | 2026-08-21T16:55:16.997945617Z 2026/08/21 16:55:16 [notice] 24#24: exiting
+proxy-1    | 2026-08-21T16:55:16.997961466Z 2026/08/21 16:55:16 [notice] 23#23: exiting
+proxy-1    | 2026-08-21T16:55:16.997977239Z 2026/08/21 16:55:16 [notice] 25#25: exiting
+proxy-1    | 2026-08-21T16:55:16.997992848Z 2026/08/21 16:55:16 [notice] 22#22: exit
+proxy-1    | 2026-08-21T16:55:16.998008416Z 2026/08/21 16:55:16 [notice] 23#23: exit
+proxy-1    | 2026-08-21T16:55:16.998023982Z 2026/08/21 16:55:16 [notice] 24#24: exit
+proxy-1    | 2026-08-21T16:55:16.998039555Z 2026/08/21 16:55:16 [notice] 25#25: exit
+proxy-1    | 2026-08-21T16:55:17.032151539Z 2026/08/21 16:55:17 [notice] 8#8: signal 17 (SIGCHLD) received from 24
+proxy-1    | 2026-08-21T16:55:17.032205436Z 2026/08/21 16:55:17 [notice] 8#8: worker process 22 exited with code 0
+proxy-1    | 2026-08-21T16:55:17.032228411Z 2026/08/21 16:55:17 [notice] 8#8: worker process 23 exited with code 0
+proxy-1    | 2026-08-21T16:55:17.032249005Z 2026/08/21 16:55:17 [notice] 8#8: worker process 24 exited with code 0
+proxy-1    | 2026-08-21T16:55:17.032458291Z 2026/08/21 16:55:17 [notice] 8#8: signal 29 (SIGIO) received
+proxy-1    | 2026-08-21T16:55:17.032489877Z 2026/08/21 16:55:17 [notice] 8#8: signal 17 (SIGCHLD) received from 22
+proxy-1    | 2026-08-21T16:55:17.040011861Z 2026/08/21 16:55:17 [notice] 8#8: signal 17 (SIGCHLD) received from 25
+proxy-1    | 2026-08-21T16:55:17.040072173Z 2026/08/21 16:55:17 [notice] 8#8: worker process 25 exited with code 0
+proxy-1    | 2026-08-21T16:55:17.040320487Z 2026/08/21 16:55:17 [notice] 8#8: signal 29 (SIGIO) received
+proxy-1    | 2026-08-21T16:55:19.260323479Z 172.19.0.1 - - [21/Aug/2026:16:55:19 +0000] "GET / HTTP/1.1" 301 162 "-" "ansible-httpget" "-"
+proxy-1    | 2026-08-21T16:55:20.486764392Z 172.19.0.1 - - [21/Aug/2026:16:55:20 +0000] "GET / HTTP/1.1" 200 132 "-" "ansible-httpget" "-"
+
+----------------------------------------
+Final Result
+----------------------------------------
+
+Containers: VERIFIED
+Nginx configuration: VERIFIED
+HTTP redirect: VERIFIED
+HTTPS application response: VERIFIED
+Certificate: VERIFIED
+
+Overall automation verification: PASSED

@@ -1,0 +1,117 @@
+# {{ ansible_managed }}
+# version: "3.8"
+
+services:
+  db:
+    image: "${MARIADB_IMAGE:-{{ mariadb_image }}}"
+    restart: unless-stopped
+
+    environment:
+      MARIADB_DATABASE: "${MARIADB_DATABASE:-{{ mariadb_database }}}"
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db-password
+
+    secrets:
+      - db-password
+
+    volumes:
+      - db-data:/var/lib/mysql
+
+    expose:
+      - "3306"
+
+    networks:
+      - backnet
+
+    healthcheck:
+      test:
+        - CMD
+        - healthcheck.sh
+        - --connect
+        - --innodb_initialized
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    image: "{{ backend_image }}"
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+
+    restart: unless-stopped
+    init: true
+
+    secrets:
+      - db-password
+
+    expose:
+      - "8000"
+
+    networks:
+      - backnet
+      - frontnet
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen("http://127.0.0.1:8000/", timeout=3).read()
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  proxy:
+    image: "${NGINX_IMAGE:-{{ nginx_image }}}"
+    restart: unless-stopped
+    init: true
+
+    ports:
+      - "${HTTP_PORT:-{{ http_port }}}:80"
+      - "${HTTPS_PORT:-{{ https_port }}}:443"
+
+    volumes:
+      - ./nginx/sites-enabled:/etc/nginx/conf.d:ro
+      - ./nginx/sites-available:/etc/nginx/sites-available:ro
+      - ./certificates/{{ ssl_certificate_filename }}:/etc/nginx/certs/{{ ssl_certificate_filename }}:ro
+      - ./certificates/{{ ssl_private_key_filename }}:/etc/nginx/certs/{{ ssl_private_key_filename }}:ro
+
+    networks:
+      - frontnet
+
+    depends_on:
+      backend:
+        condition: service_healthy
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --no-check-certificate -q -O /dev/null https://127.0.0.1/nginx-health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  db-data:
+    driver: local
+
+secrets:
+  db-password:
+    file: ./secrets/db_password.txt
+
+networks:
+  backnet:
+    driver: bridge
+    internal: true
+
+  frontnet:
+    driver: bridge

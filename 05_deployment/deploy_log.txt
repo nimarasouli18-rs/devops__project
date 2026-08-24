@@ -1,0 +1,331 @@
+
+PLAY [Deploy the Flask and MariaDB application services] ***********************
+
+TASK [Verify required source files on the Ansible Controller] ******************
+ok: [ubuntu_deploy -> localhost] => (item=Dockerfile)
+ok: [ubuntu_deploy -> localhost] => (item=.dockerignore)
+ok: [ubuntu_deploy -> localhost] => (item=app/hello.py)
+ok: [ubuntu_deploy -> localhost] => (item=app/requirements.txt)
+
+TASK [Stop when a required source file is missing] *****************************
+ok: [ubuntu_deploy] => (item=Dockerfile) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "failed": false,
+        "item": "Dockerfile",
+        "stat": {
+            "atime": 1787515786.2259643,
+            "attr_flags": "e",
+            "attributes": [
+                "extents"
+            ],
+            "block_size": 4096,
+            "blocks": 8,
+            "charset": "us-ascii",
+            "checksum": "07676b05606464ee23e979966f32f88035debab1",
+            "ctime": 1787515759.600644,
+            "dev": 2051,
+            "device_type": 0,
+            "disk_usage_bytes": 4096,
+            "executable": false,
+            "exists": true,
+            "gid": 1000,
+            "gr_name": "nimarasouli",
+            "inode": 616330,
+            "isblk": false,
+            "ischr": false,
+            "isdir": false,
+            "isfifo": false,
+            "isgid": false,
+            "islnk": false,
+            "isreg": true,
+            "issock": false,
+            "isuid": false,
+            "mimetype": "text/plain",
+            "mode": "0664",
+            "mtime": 1787515759.600644,
+            "nlink": 1,
+            "path": "/home/nimarasouli/Desktop/devops_project/08_ansible_automation/../04_docker/Dockerfile",
+            "pw_name": "nimarasouli",
+            "readable": true,
+            "rgrp": true,
+            "roth": true,
+            "rusr": true,
+            "size": 1093,
+            "uid": 1000,
+            "version": "3621361423",
+            "wgrp": true,
+            "woth": false,
+            "writeable": true,
+            "wusr": true,
+            "xgrp": false,
+            "xoth": false,
+            "xusr": false
+        }
+    },
+    "msg": "All assertions passed"
+}
+ok: [ubuntu_deploy] => (item=.dockerignore) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "failed": false,
+        "item": ".dockerignore",
+        "stat": {
+            "atime": 1787515786.2219644,
+            "attr_flags": "e",
+            "attributes": [
+                "extents"
+            ],
+            "block_size": 4096,
+            "blocks": 8,
+            "charset": "us-ascii",
+            "checksum": "87048d001642430e616bd2b280be78ae0a6d9d61",
+            "ctime": 1787515759.5949645,
+            "dev": 2051,
+            "device_type": 0,
+            "disk_usage_bytes": 4096,
+            "executable": false,
+            "exists": true,
+            "gid": 1000,
+            "gr_name": "nimarasouli",
+            "inode": 616316,
+            "isblk": false,
+            "ischr": false,
+            "isdir": false,
+            "isfifo": false,
+            "isgid": false,
+            "islnk": false,
+            "isreg": true,
+            "issock": false,
+            "isuid": false,
+            "mimetype": "text/plain",
+            "mode": "0664",
+            "mtime": 1787515759.5949645,
+            "nlink": 1,
+            "path": "/home/nimarasouli/Desktop/devops_project/08_ansible_automation/../04_docker/.dockerignore",
+            "pw_name": "nimarasouli",
+            "readable": true,
+            "rgrp": true,
+            "roth": true,
+            "rusr": true,
+            "size": 176,
+            "uid": 1000,
+            "version": "1319647406",
+            "wgrp": true,
+            "woth": false,
+            "writeable": true,
+            "wusr": true,
+            "xgrp": false,
+            "xoth": false,
+            "xusr": false
+        }
+    },
+    "msg": "All assertions passed"
+}
+ok: [ubuntu_deploy] => (item=app/hello.py) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "failed": false,
+        "item": "app/hello.py",
+        "stat": {
+            "atime": 1787537620.867831,
+            "attr_flags": "e",
+            "attributes": [
+                "extents"
+            ],
+            "block_size": 4096,
+            "blocks": 8,
+            "charset": "us-ascii",
+            "checksum": "3cb6bdde888c0b66ab2335c0319f46fbfd585208",
+            "ctime": 1787537620.862831,
+            "dev": 2051,
+            "device_type": 0,
+            "disk_usage_bytes": 4096,
+            "executable": true,
+            "exists": true,
+            "gid": 1000,
+            "gr_name": "nimarasouli",
+            "inode": 616332,
+            "isblk": false,
+            "ischr": false,
+            "isdir": false,
+            "isfifo": false,
+            "isgid": false,
+            "islnk": false,
+            "isreg": true,
+            "issock": false,
+            "isuid": false,
+            "mimetype": "text/x-script.python",
+            "mode": "0775",
+            "mtime": 1787537620.862831,
+            "nlink": 1,
+            "path": "/home/nimarasouli/Desktop/devops_project/08_ansible_automation/../04_docker/app/hello.py",
+            "pw_name": "nimarasouli",
+            "readable": true,
+            "rgrp": true,
+            "roth": true,
+            "rusr": true,
+            "size": 1809,
+            "uid": 1000,
+            "version": "2480965914",
+            "wgrp": true,
+            "woth": false,
+            "writeable": true,
+            "wusr": true,
+            "xgrp": true,
+            "xoth": true,
+            "xusr": true
+        }
+    },
+    "msg": "All assertions passed"
+}
+ok: [ubuntu_deploy] => (item=app/requirements.txt) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "failed": false,
+        "item": "app/requirements.txt",
+        "stat": {
+            "atime": 1787515786.2259643,
+            "attr_flags": "e",
+            "attributes": [
+                "extents"
+            ],
+            "block_size": 4096,
+            "blocks": 8,
+            "charset": "us-ascii",
+            "checksum": "2e876efdb318e2f6ab8b8fada924df31eba94a99",
+            "ctime": 1787515759.6025102,
+            "dev": 2051,
+            "device_type": 0,
+            "disk_usage_bytes": 4096,
+            "executable": true,
+            "exists": true,
+            "gid": 1000,
+            "gr_name": "nimarasouli",
+            "inode": 616333,
+            "isblk": false,
+            "ischr": false,
+            "isdir": false,
+            "isfifo": false,
+            "isgid": false,
+            "islnk": false,
+            "isreg": true,
+            "issock": false,
+            "isuid": false,
+            "mimetype": "text/plain",
+            "mode": "0775",
+            "mtime": 1787515759.6025102,
+            "nlink": 1,
+            "path": "/home/nimarasouli/Desktop/devops_project/08_ansible_automation/../04_docker/app/requirements.txt",
+            "pw_name": "nimarasouli",
+            "readable": true,
+            "rgrp": true,
+            "roth": true,
+            "rusr": true,
+            "size": 60,
+            "uid": 1000,
+            "version": "1128549146",
+            "wgrp": true,
+            "woth": false,
+            "writeable": true,
+            "wusr": true,
+            "xgrp": true,
+            "xoth": true,
+            "xusr": true
+        }
+    },
+    "msg": "All assertions passed"
+}
+
+TASK [Install deployment helper packages] **************************************
+ok: [ubuntu_deploy]
+
+TASK [Ensure Docker Compose plugin is up to date] ******************************
+ok: [ubuntu_deploy]
+
+TASK [Read Docker Compose version] *********************************************
+ok: [ubuntu_deploy]
+
+TASK [Require Docker Compose 5.5.0 or newer] ***********************************
+ok: [ubuntu_deploy] => {
+    "changed": false,
+    "msg": "Docker Compose 5.5.0 is supported."
+}
+
+TASK [Ensure Docker is enabled and running] ************************************
+ok: [ubuntu_deploy]
+
+TASK [Create the host group used by the backend container secret] **************
+ok: [ubuntu_deploy]
+
+TASK [Create application directories] ******************************************
+ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
+ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/app', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
+ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/nginx', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
+ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/nginx/sites-available', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
+ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/nginx/sites-enabled', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
+ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/certificates', 'owner': 'root', 'group': 'root', 'mode': '0750'})
+ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/secrets', 'owner': 'root', 'group': 'appcontainer', 'mode': '0750'})
+
+TASK [Copy Dockerfile and application code] ************************************
+ok: [ubuntu_deploy] => (item={'src': 'Dockerfile', 'dest': 'Dockerfile', 'mode': '0644'})
+changed: [ubuntu_deploy] => (item={'src': '.dockerignore', 'dest': '.dockerignore', 'mode': '0644'})
+ok: [ubuntu_deploy] => (item={'src': 'app/hello.py', 'dest': 'app/hello.py', 'mode': '0644'})
+ok: [ubuntu_deploy] => (item={'src': 'app/requirements.txt', 'dest': 'app/requirements.txt', 'mode': '0644'})
+
+TASK [Prevent certificates from entering the Docker build context] *************
+changed: [ubuntu_deploy]
+
+TASK [Deploy the Compose environment file] *************************************
+ok: [ubuntu_deploy]
+
+TASK [Deploy the Docker Compose file] ******************************************
+ok: [ubuntu_deploy]
+
+TASK [Check whether the database password already exists] **********************
+ok: [ubuntu_deploy]
+
+TASK [Generate a database password] ********************************************
+skipping: [ubuntu_deploy]
+
+TASK [Write the database password file securely] *******************************
+skipping: [ubuntu_deploy]
+
+TASK [Enforce database password ownership and permissions] *********************
+ok: [ubuntu_deploy]
+
+TASK [Validate Docker Compose configuration] ***********************************
+ok: [ubuntu_deploy]
+
+TASK [Deploy database and backend with Docker Compose] *************************
+changed: [ubuntu_deploy]
+
+TASK [Test the backend from inside its container] ******************************
+ok: [ubuntu_deploy]
+
+TASK [Read application container status] ***************************************
+ok: [ubuntu_deploy]
+
+TASK [Display application verification results] ********************************
+ok: [ubuntu_deploy] => {
+    "msg": [
+        "Backend test: HTTP status: 200\n<div>Hello Blog post #1</div><div>Hello Blog post #2</div><div>Hello Blog post #3</div><div>Hello Blog post #4</div>",
+        "NAME                          IMAGE                           COMMAND                  SERVICE   CREATED          STATUS                    PORTS\nnginx-flask-mysql-backend-1   nginx-flask-mysql-backend:1.0   \"gunicorn --bind=0.0…\"   backend   40 seconds ago   Up 16 seconds (healthy)   8000/tcp\nnginx-flask-mysql-db-1        mariadb:10.11.18-jammy          \"docker-entrypoint.s…\"   db        41 seconds ago   Up 39 seconds (healthy)   3306/tcp"
+    ]
+}
+
+PLAY RECAP *********************************************************************
+ubuntu_deploy              : ok=20   changed=3    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+

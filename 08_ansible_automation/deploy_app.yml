@@ -1,0 +1,342 @@
+---
+- name: Deploy the Flask and MariaDB application services
+  hosts: deployment_servers
+  become: true
+  gather_facts: false
+
+  vars_files:
+    - app_vars.yml
+    - nginx_vars.yml
+
+  tasks:
+    - name: Verify required source files on the Ansible Controller
+      ansible.builtin.stat:
+        path: "{{ source_dir }}/{{ item }}"
+      loop:
+        - Dockerfile
+        - .dockerignore
+        - app/hello.py
+        - app/requirements.txt
+      register: source_file_checks
+      delegate_to: localhost
+      become: false
+
+    - name: Stop when a required source file is missing
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists | default(false)
+          - item.stat.isreg | default(false)
+        fail_msg: "Required source file is missing: {{ item.item }}"
+      loop: "{{ source_file_checks.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Install deployment helper packages
+      ansible.builtin.apt:
+        name:
+          - openssl
+          - ca-certificates
+        state: present
+        update_cache: true
+
+    - name: Ensure Docker Compose plugin is up to date
+      ansible.builtin.apt:
+        name: docker-compose-plugin
+        state: latest
+        update_cache: true
+
+    - name: Read Docker Compose version
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - version
+          - --short
+      register: docker_compose_version
+      changed_when: false
+      check_mode: false
+
+    - name: Require Docker Compose 5.5.0 or newer
+      ansible.builtin.assert:
+        that:
+          - >-
+            (
+              docker_compose_version.stdout
+              | trim
+              | regex_replace('^v', '')
+            ) is version('5.5.0', '>=')
+        fail_msg: >-
+          Docker Compose 5.5.0 or newer is required.
+          Detected version:
+          {{ docker_compose_version.stdout | trim }}.
+        success_msg: >-
+          Docker Compose
+          {{ docker_compose_version.stdout | trim }}
+          is supported.
+      when: not ansible_check_mode
+
+    - name: Ensure Docker is enabled and running
+      ansible.builtin.systemd_service:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Create the host group used by the backend container secret
+      ansible.builtin.group:
+        name: "{{ secret_group }}"
+        gid: "{{ secret_gid }}"
+        state: present
+
+    - name: Create application directories
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - path: "{{ deployment_dir }}"
+          owner: "{{ deployment_user }}"
+          group: "{{ deployment_group }}"
+          mode: "0755"
+        - path: "{{ deployment_dir }}/app"
+          owner: "{{ deployment_user }}"
+          group: "{{ deployment_group }}"
+          mode: "0755"
+        - path: "{{ deployment_dir }}/nginx"
+          owner: "{{ deployment_user }}"
+          group: "{{ deployment_group }}"
+          mode: "0755"
+        - path: "{{ nginx_sites_available_dir }}"
+          owner: "{{ deployment_user }}"
+          group: "{{ deployment_group }}"
+          mode: "0755"
+        - path: "{{ nginx_sites_enabled_dir }}"
+          owner: "{{ deployment_user }}"
+          group: "{{ deployment_group }}"
+          mode: "0755"
+        - path: "{{ ssl_directory }}"
+          owner: root
+          group: root
+          mode: "0750"
+        - path: "{{ deployment_dir }}/secrets"
+          owner: root
+          group: "{{ secret_group }}"
+          mode: "0750"
+
+    - name: Copy Dockerfile and application code
+      ansible.builtin.copy:
+        src: "{{ source_dir }}/{{ item.src }}"
+        dest: "{{ deployment_dir }}/{{ item.dest }}"
+        owner: "{{ deployment_user }}"
+        group: "{{ deployment_group }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - src: Dockerfile
+          dest: Dockerfile
+          mode: "0644"
+        - src: .dockerignore
+          dest: .dockerignore
+          mode: "0644"
+        - src: app/hello.py
+          dest: app/hello.py
+          mode: "0644"
+        - src: app/requirements.txt
+          dest: app/requirements.txt
+          mode: "0644"
+
+    - name: Prevent certificates from entering the Docker build context
+      ansible.builtin.lineinfile:
+        path: "{{ deployment_dir }}/.dockerignore"
+        line: certificates/
+        state: present
+        owner: "{{ deployment_user }}"
+        group: "{{ deployment_group }}"
+        mode: "0644"
+
+    - name: Deploy the Compose environment file
+      ansible.builtin.template:
+        src: templates/app.env.j2
+        dest: "{{ deployment_dir }}/{{ compose_env_file }}"
+        owner: "{{ deployment_user }}"
+        group: "{{ deployment_group }}"
+        mode: "0640"
+
+    - name: Deploy the Docker Compose file
+      ansible.builtin.template:
+        src: templates/docker-compose.yml.j2
+        dest: "{{ deployment_dir }}/{{ compose_file_name }}"
+        owner: "{{ deployment_user }}"
+        group: "{{ deployment_group }}"
+        mode: "0644"
+
+    - name: Check whether the database password already exists
+      ansible.builtin.stat:
+        path: "{{ deployment_dir }}/secrets/db_password.txt"
+      register: database_password_file
+
+    - name: Generate a database password
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - rand
+          - -hex
+          - "24"
+      register: generated_database_password
+      changed_when: true
+      when:
+        - not database_password_file.stat.exists
+        - not ansible_check_mode
+      no_log: true
+
+    - name: Write the database password file securely
+      ansible.builtin.copy:
+        dest: "{{ deployment_dir }}/secrets/db_password.txt"
+        content: "{{ generated_database_password.stdout }}"
+        owner: root
+        group: "{{ secret_group }}"
+        mode: "0640"
+      when:
+        - not database_password_file.stat.exists
+        - not ansible_check_mode
+      no_log: true
+
+    - name: Enforce database password ownership and permissions
+      ansible.builtin.file:
+        path: "{{ deployment_dir }}/secrets/db_password.txt"
+        state: file
+        owner: root
+        group: "{{ secret_group }}"
+        mode: "0640"
+      when: database_password_file.stat.exists or not ansible_check_mode
+
+    - name: Validate Docker Compose configuration
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - "{{ compose_env_file }}"
+          - -f
+          - "{{ compose_file_name }}"
+          - config
+          - --quiet
+        chdir: "{{ deployment_dir }}"
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: Build and start database and backend services
+      when: not ansible_check_mode
+      block:
+        - name: Deploy database and backend with Docker Compose
+          community.docker.docker_compose_v2:
+            project_src: "{{ deployment_dir }}"
+            files:
+              - "{{ compose_file_name }}"
+            env_files:
+              - "{{ compose_env_file }}"
+            services:
+              - db
+              - backend
+            dependencies: true
+            state: present
+            build: always
+            pull: missing
+            wait: true
+            wait_timeout: "{{ compose_wait_timeout }}"
+          register: application_compose_result
+
+        - name: Test the backend from inside its container
+          ansible.builtin.command:
+            argv:
+              - docker
+              - compose
+              - --env-file
+              - "{{ compose_env_file }}"
+              - -f
+              - "{{ compose_file_name }}"
+              - exec
+              - -T
+              - backend
+              - python
+              - -c
+              - >-
+                import urllib.request;
+                response = urllib.request.urlopen('http://127.0.0.1:8000/', timeout=10);
+                print('HTTP status:', response.status);
+                print(response.read().decode())
+            chdir: "{{ deployment_dir }}"
+          register: backend_http_test
+          changed_when: false
+
+      rescue:
+        - name: Display the original deployment failure
+          ansible.builtin.debug:
+            msg:
+              - >-
+                Failed task:
+                {{ ansible_failed_task.name | default('unknown') }}
+              - >-
+                Message:
+                {{ ansible_failed_result.msg | default('not available') }}
+              - >-
+                Command:
+                {{ ansible_failed_result.cmd | default('not available') }}
+              - >-
+                Standard error:
+                {{ ansible_failed_result.stderr | default('not available') }}
+
+        - name: Collect application logs after a deployment failure
+          ansible.builtin.command:
+            argv:
+              - docker
+              - compose
+              - --env-file
+              - "{{ compose_env_file }}"
+              - -f
+              - "{{ compose_file_name }}"
+              - logs
+              - --no-color
+              - --tail
+              - "200"
+            chdir: "{{ deployment_dir }}"
+          register: failed_application_logs
+          changed_when: false
+          failed_when: false
+
+        - name: Display application logs from the failed deployment
+          ansible.builtin.debug:
+            var: failed_application_logs.stdout_lines
+
+        - name: Stop after application deployment failure
+          ansible.builtin.fail:
+            msg: >-
+              Failed task:
+              {{ ansible_failed_task.name | default('unknown') }}.
+              Error:
+              {{
+                ansible_failed_result.msg
+                | default('See the deployment logs above.')
+              }}
+
+    - name: Read application container status
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - "{{ compose_env_file }}"
+          - -f
+          - "{{ compose_file_name }}"
+          - ps
+          - --all
+        chdir: "{{ deployment_dir }}"
+      register: application_container_status
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: Display application verification results
+      ansible.builtin.debug:
+        msg:
+          - "Backend test: {{ backend_http_test.stdout | default('not executed in check mode') }}"
+          - "{{ application_container_status.stdout | default('Container status is skipped in check mode.') }}"

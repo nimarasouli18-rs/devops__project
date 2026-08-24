@@ -1,0 +1,22 @@
+---
+deployment_dir: /opt/nginx-flask-mysql
+deployment_user: daneshkar
+deployment_group: daneshkar
+
+source_dir: "{{ playbook_dir }}/../04_docker"
+compose_file_name: docker-compose.yml
+compose_env_file: .env
+compose_project_name: nginx-flask-mysql
+compose_wait_timeout: 180
+
+backend_image: nginx-flask-mysql-backend:1.0
+mariadb_image: mariadb:10.11.18-jammy
+nginx_image: nginx:1.30.4-alpine
+mariadb_database: example
+
+http_port: 80
+https_port: 443
+
+secret_group: appcontainer
+secret_gid: 10001
+backend_runtime_gid: 10001

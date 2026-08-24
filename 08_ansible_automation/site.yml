@@ -1,0 +1,4 @@
+---
+- ansible.builtin.import_playbook: deploy_app.yml
+- ansible.builtin.import_playbook: deploy_nginx.yml
+- ansible.builtin.import_playbook: verify.yml

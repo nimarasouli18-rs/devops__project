@@ -1,0 +1,261 @@
+---
+- name: Configure containerized Nginx and self-signed TLS
+  hosts: deployment_servers
+  become: true
+  gather_facts: false
+  force_handlers: true
+
+  vars_files:
+    - app_vars.yml
+    - nginx_vars.yml
+
+  tasks:
+    - name: Install packages required by the crypto modules
+      ansible.builtin.apt:
+        name:
+          - openssl
+          - ca-certificates
+          - python3-cryptography
+        state: present
+        update_cache: true
+
+    - name: Ensure Nginx and certificate directories exist
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - path: "{{ nginx_sites_available_dir }}"
+          owner: "{{ deployment_user }}"
+          group: "{{ deployment_group }}"
+          mode: "0755"
+        - path: "{{ nginx_sites_enabled_dir }}"
+          owner: "{{ deployment_user }}"
+          group: "{{ deployment_group }}"
+          mode: "0755"
+        - path: "{{ ssl_directory }}"
+          owner: root
+          group: root
+          mode: "0750"
+
+    - name: Generate the TLS private key
+      community.crypto.openssl_privatekey:
+        path: "{{ ssl_private_key_path }}"
+        type: RSA
+        size: "{{ ssl_key_size }}"
+        owner: root
+        group: root
+        mode: "0600"
+      notify: Reload containerized Nginx
+
+    - name: Generate the certificate signing request
+      community.crypto.openssl_csr:
+        path: "{{ ssl_csr_path }}"
+        privatekey_path: "{{ ssl_private_key_path }}"
+        common_name: "{{ app_domain }}"
+        country_name: AZ
+        state_or_province_name: Baku
+        locality_name: Baku
+        organization_name: DevOps Lab
+        organizational_unit_name: Training
+        subject_alt_name:
+          - "DNS:{{ app_domain }}"
+          - "IP:{{ app_server_ip }}"
+        basic_constraints:
+          - CA:FALSE
+        basic_constraints_critical: true
+        key_usage:
+          - digitalSignature
+          - keyEncipherment
+        key_usage_critical: true
+        extended_key_usage:
+          - serverAuth
+        digest: sha256
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload containerized Nginx
+
+    - name: Generate the self-signed certificate
+      community.crypto.x509_certificate:
+        path: "{{ ssl_certificate_path }}"
+        csr_path: "{{ ssl_csr_path }}"
+        privatekey_path: "{{ ssl_private_key_path }}"
+        provider: selfsigned
+        selfsigned_digest: sha256
+        selfsigned_not_after: "+{{ ssl_validity_days }}d"
+        owner: root
+        group: root
+        mode: "0644"
+        backup: true
+      notify: Reload containerized Nginx
+
+    - name: Deploy the Nginx virtual host template
+      ansible.builtin.template:
+        src: templates/nginx.conf.j2
+        dest: "{{ nginx_sites_available_dir }}/{{ nginx_site_filename }}"
+        owner: "{{ deployment_user }}"
+        group: "{{ deployment_group }}"
+        mode: "0644"
+        backup: true
+      notify: Reload containerized Nginx
+
+    - name: Enable the Nginx site with a symbolic link
+      ansible.builtin.file:
+        src: "../sites-available/{{ nginx_site_filename }}"
+        dest: "{{ nginx_sites_enabled_dir }}/{{ nginx_site_filename }}"
+        state: link
+        force: true
+        owner: "{{ deployment_user }}"
+        group: "{{ deployment_group }}"
+      notify: Reload containerized Nginx
+
+    - name: Disable the default Nginx site
+      ansible.builtin.file:
+        path: "{{ nginx_sites_enabled_dir }}/default.conf"
+        state: absent
+      notify: Reload containerized Nginx
+
+    - name: Pull the Nginx image
+      community.docker.docker_compose_v2_pull:
+        project_src: "{{ deployment_dir }}"
+        files:
+          - "{{ compose_file_name }}"
+        env_files:
+          - "{{ compose_env_file }}"
+        services:
+          - proxy
+        include_deps: false
+        policy: missing
+      when: not ansible_check_mode
+
+    - name: Test pending Nginx configuration in a temporary container
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - "{{ compose_env_file }}"
+          - -f
+          - "{{ compose_file_name }}"
+          - run
+          - --rm
+          - --no-deps
+          - proxy
+          - nginx
+          - -t
+        chdir: "{{ deployment_dir }}"
+      register: pending_nginx_config_test
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: Ensure the Nginx proxy service is running
+      community.docker.docker_compose_v2:
+        project_src: "{{ deployment_dir }}"
+        files:
+          - "{{ compose_file_name }}"
+        env_files:
+          - "{{ compose_env_file }}"
+        services:
+          - proxy
+        dependencies: true
+        state: present
+        build: never
+        pull: missing
+        wait: true
+        wait_timeout: "{{ compose_wait_timeout }}"
+      when: not ansible_check_mode
+
+    - name: Run notified Nginx handlers now
+      ansible.builtin.meta: flush_handlers
+      when: not ansible_check_mode
+
+    - name: Wait for the HTTPS listener
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: "{{ https_port }}"
+        state: started
+        timeout: 60
+      when: not ansible_check_mode
+
+    - name: Test HTTP to HTTPS redirect on the deployment server
+      ansible.builtin.uri:
+        url: http://127.0.0.1/
+        method: GET
+        headers:
+          Host: "{{ app_domain }}"
+        follow_redirects: none
+        status_code: 301
+        return_content: false
+      register: nginx_http_redirect_test
+      when: not ansible_check_mode
+
+    - name: Verify the redirect target
+      ansible.builtin.assert:
+        that:
+          - nginx_http_redirect_test.location == "https://{{ app_domain }}/"
+        fail_msg: >-
+          Unexpected redirect target:
+          {{ nginx_http_redirect_test.location | default('missing') }}
+      when: not ansible_check_mode
+
+    - name: Test HTTPS application access on the deployment server
+      ansible.builtin.uri:
+        url: https://127.0.0.1/
+        method: GET
+        headers:
+          Host: "{{ app_domain }}"
+        validate_certs: false
+        status_code: 200
+        return_content: true
+      register: nginx_https_test
+      when: not ansible_check_mode
+
+    - name: Display Nginx verification results
+      ansible.builtin.debug:
+        msg:
+          - "Pending config test: {{ pending_nginx_config_test.stderr | default('skipped in check mode') }}"
+          - "HTTP redirect status: {{ nginx_http_redirect_test.status | default('skipped in check mode') }}"
+          - "HTTPS status: {{ nginx_https_test.status | default('skipped in check mode') }}"
+
+  handlers:
+    - name: Validate active Nginx configuration
+      listen: Reload containerized Nginx
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - "{{ compose_env_file }}"
+          - -f
+          - "{{ compose_file_name }}"
+          - exec
+          - -T
+          - proxy
+          - nginx
+          - -t
+        chdir: "{{ deployment_dir }}"
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: Reload active Nginx process
+      listen: Reload containerized Nginx
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - "{{ compose_env_file }}"
+          - -f
+          - "{{ compose_file_name }}"
+          - exec
+          - -T
+          - proxy
+          - nginx
+          - -s
+          - reload
+        chdir: "{{ deployment_dir }}"
+      changed_when: true
+      when: not ansible_check_mode

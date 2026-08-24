@@ -1,0 +1,27 @@
+---
+app_domain: myapp.test
+app_server_ip: "{{ ansible_host }}"
+
+nginx_site_filename: myapp.conf
+nginx_sites_available_dir: "{{ deployment_dir }}/nginx/sites-available"
+nginx_sites_enabled_dir: "{{ deployment_dir }}/nginx/sites-enabled"
+
+ssl_directory: "{{ deployment_dir }}/certificates"
+ssl_private_key_filename: myapp.test.key
+ssl_csr_filename: myapp.test.csr
+ssl_certificate_filename: myapp.test.crt
+
+ssl_private_key_path: "{{ ssl_directory }}/{{ ssl_private_key_filename }}"
+ssl_csr_path: "{{ ssl_directory }}/{{ ssl_csr_filename }}"
+ssl_certificate_path: "{{ ssl_directory }}/{{ ssl_certificate_filename }}"
+
+ssl_key_size: 3072
+ssl_validity_days: 365
+ssl_protocols: TLSv1.2 TLSv1.3
+ssl_ciphers: >-
+  ECDHE-ECDSA-AES128-GCM-SHA256:
+  ECDHE-RSA-AES128-GCM-SHA256:
+  ECDHE-ECDSA-AES256-GCM-SHA384:
+  ECDHE-RSA-AES256-GCM-SHA384:
+  ECDHE-ECDSA-CHACHA20-POLY1305:
+  ECDHE-RSA-CHACHA20-POLY1305

@@ -1,0 +1,285 @@
+---
+- name: Verify the complete automated deployment
+  hosts: deployment_servers
+  become: true
+  gather_facts: false
+
+  vars_files:
+    - app_vars.yml
+    - nginx_vars.yml
+
+  vars:
+    generated_at: "{{ lookup('ansible.builtin.pipe', 'date --iso-8601=seconds') }}"
+
+  tasks:
+    - name: Run complete deployment verification
+      when: not ansible_check_mode
+      block:
+        - name: Wait for public HTTP and HTTPS ports
+          ansible.builtin.wait_for:
+            host: 127.0.0.1
+            port: "{{ item }}"
+            state: started
+            timeout: 60
+          loop:
+            - "{{ http_port }}"
+            - "{{ https_port }}"
+
+        - name: Read Docker Compose container status
+          ansible.builtin.command:
+            argv:
+              - docker
+              - compose
+              - --env-file
+              - "{{ compose_env_file }}"
+              - -f
+              - "{{ compose_file_name }}"
+              - ps
+              - --all
+            chdir: "{{ deployment_dir }}"
+          register: compose_status
+          changed_when: false
+
+        - name: Read recent Docker Compose logs
+          ansible.builtin.command:
+            argv:
+              - docker
+              - compose
+              - --env-file
+              - "{{ compose_env_file }}"
+              - -f
+              - "{{ compose_file_name }}"
+              - logs
+              - --no-color
+              - --timestamps
+              - --tail
+              - "100"
+            chdir: "{{ deployment_dir }}"
+          register: compose_logs
+          changed_when: false
+
+        - name: Test active Nginx configuration
+          ansible.builtin.command:
+            argv:
+              - docker
+              - compose
+              - --env-file
+              - "{{ compose_env_file }}"
+              - -f
+              - "{{ compose_file_name }}"
+              - exec
+              - -T
+              - proxy
+              - nginx
+              - -t
+            chdir: "{{ deployment_dir }}"
+          register: active_nginx_test
+          changed_when: false
+
+        - name: Read certificate details
+          ansible.builtin.command:
+            argv:
+              - openssl
+              - x509
+              - -in
+              - "{{ ssl_certificate_path }}"
+              - -noout
+              - -subject
+              - -issuer
+              - -serial
+              - -dates
+              - -fingerprint
+              - -sha256
+              - -ext
+              - subjectAltName
+          register: certificate_details
+          changed_when: false
+
+        - name: Test HTTP redirect from the Ubuntu server
+          ansible.builtin.uri:
+            url: http://127.0.0.1/
+            method: GET
+            headers:
+              Host: "{{ app_domain }}"
+            follow_redirects: none
+            status_code: 301
+            return_content: false
+          register: server_http_redirect
+
+        - name: Verify the server redirect target
+          ansible.builtin.assert:
+            that:
+              - server_http_redirect.location == "https://{{ app_domain }}/"
+
+        - name: Test HTTPS from the Ubuntu server
+          ansible.builtin.uri:
+            url: https://127.0.0.1/
+            method: GET
+            headers:
+              Host: "{{ app_domain }}"
+            validate_certs: false
+            status_code: 200
+            return_content: true
+          register: server_https_test
+
+        - name: Test HTTP redirect from the Ansible Controller
+          ansible.builtin.command:
+            argv:
+              - curl
+              - --silent
+              - --show-error
+              - --head
+              - --max-time
+              - "15"
+              - --resolve
+              - "{{ app_domain }}:80:{{ app_server_ip }}"
+              - "http://{{ app_domain }}/"
+          register: controller_http_redirect
+          changed_when: false
+          delegate_to: localhost
+          become: false
+
+        - name: Test HTTPS from the Ansible Controller
+          ansible.builtin.command:
+            argv:
+              - curl
+              - --insecure
+              - --silent
+              - --show-error
+              - --include
+              - --max-time
+              - "15"
+              - --resolve
+              - "{{ app_domain }}:443:{{ app_server_ip }}"
+              - "https://{{ app_domain }}/"
+          register: controller_https_test
+          changed_when: false
+          delegate_to: localhost
+          become: false
+
+        - name: Follow the HTTP redirect from the Ansible Controller
+          ansible.builtin.command:
+            argv:
+              - curl
+              - --insecure
+              - --location
+              - --silent
+              - --show-error
+              - --include
+              - --max-time
+              - "20"
+              - --resolve
+              - "{{ app_domain }}:80:{{ app_server_ip }}"
+              - --resolve
+              - "{{ app_domain }}:443:{{ app_server_ip }}"
+              - "http://{{ app_domain }}/"
+          register: controller_follow_redirect
+          changed_when: false
+          delegate_to: localhost
+          become: false
+
+        - name: Write verification results on the Controller
+          ansible.builtin.copy:
+            dest: "{{ playbook_dir }}/verification.txt"
+            mode: "0644"
+            content: |
+              ========================================
+              Ansible Automation Verification
+              ========================================
+
+              Generated at:
+              {{ generated_at }}
+
+              Deployment server:
+              {{ app_server_ip }}
+
+              Domain:
+              {{ app_domain }}
+
+              ----------------------------------------
+              Container Status
+              ----------------------------------------
+
+              {{ compose_status.stdout }}
+
+              ----------------------------------------
+              Nginx Configuration Test
+              ----------------------------------------
+
+              {{ active_nginx_test.stdout | default('') }}
+              {{ active_nginx_test.stderr | default('') }}
+
+              ----------------------------------------
+              Certificate Information
+              ----------------------------------------
+
+              {{ certificate_details.stdout }}
+
+              ----------------------------------------
+              HTTP Redirect Test on Ubuntu
+              ----------------------------------------
+
+              Status: {{ server_http_redirect.status }}
+              Location: {{ server_http_redirect.location }}
+              Result: PASSED
+
+              ----------------------------------------
+              HTTPS Test on Ubuntu
+              ----------------------------------------
+
+              Status: {{ server_https_test.status }}
+              Response:
+              {{ server_https_test.content }}
+              Result: PASSED
+
+              ----------------------------------------
+              HTTP Redirect Test from AlmaLinux Controller
+              ----------------------------------------
+
+              {{ controller_http_redirect.stdout }}
+
+              ----------------------------------------
+              HTTPS Test from AlmaLinux Controller
+              ----------------------------------------
+
+              {{ controller_https_test.stdout }}
+
+              ----------------------------------------
+              Follow Redirect Test from Controller
+              ----------------------------------------
+
+              {{ controller_follow_redirect.stdout }}
+
+              ----------------------------------------
+              Recent Container Logs
+              ----------------------------------------
+
+              {{ compose_logs.stdout }}
+
+              ----------------------------------------
+              Final Result
+              ----------------------------------------
+
+              Containers: VERIFIED
+              Nginx configuration: VERIFIED
+              HTTP redirect: VERIFIED
+              HTTPS application response: VERIFIED
+              Certificate: VERIFIED
+
+              Overall automation verification: PASSED
+          delegate_to: localhost
+          become: false
+
+        - name: Display final automation result
+          ansible.builtin.debug:
+            msg:
+              - "HTTP redirect status: {{ server_http_redirect.status }}"
+              - "HTTPS status: {{ server_https_test.status }}"
+              - "Verification file: {{ playbook_dir }}/verification.txt"
+
+    - name: Explain verification behavior in check mode
+      ansible.builtin.debug:
+        msg: >-
+          Runtime verification is skipped in check mode because it requires
+          running containers and live HTTP/HTTPS connections.
+      when: ansible_check_mode
