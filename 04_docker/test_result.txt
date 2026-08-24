@@ -1,8 +1,182 @@
+========================================
+Application Test Results
+========================================
+
+Generated at: 2026-08-20T11:31:18+03:30
+Application URL: http://127.0.0.1:8080
+
+===== HTTP Response =====
 HTTP/1.1 200 OK
-Server: Werkzeug/3.1.8 Python/3.13.15
-Date: Sun, 23 Aug 2026 20:46:56 GMT
+Server: nginx/1.30.4
+Date: Thu, 20 Aug 2026 08:01:18 GMT
 Content-Type: text/html; charset=utf-8
 Content-Length: 132
-Connection: close
+Connection: keep-alive
 
 <div>   Hello  Blog post #1</div><div>   Hello  Blog post #2</div><div>   Hello  Blog post #3</div><div>   Hello  Blog post #4</div>
+
+===== MariaDB Health Check =====
+
+MariaDB health-check exit code: 0
+
+===== Backend Internal HTTP Test =====
+HTTP status: 200
+<div>   Hello  Blog post #1</div><div>   Hello  Blog post #2</div><div>   Hello  Blog post #3</div><div>   Hello  Blog post #4</div>
+
+===== Compose Container Status =====
+NAME                              IMAGE                           COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+nginx-flask-mysql-lab-backend-1   nginx-flask-mysql-backend:1.0   "gunicorn --bind=0.0…"   backend   7 minutes ago    Up 7 minutes (healthy)    8000/tcp
+nginx-flask-mysql-lab-db-1        mariadb:10.11.18-jammy          "docker-entrypoint.s…"   db        40 minutes ago   Up 40 minutes (healthy)   3306/tcp
+nginx-flask-mysql-lab-proxy-1     nginx:1.30.4-alpine             "/docker-entrypoint.…"   proxy     7 minutes ago    Up 7 minutes (healthy)    0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+
+===== Recent Compose Logs =====
+db-1  | 2026-08-20T07:20:45.161613279Z 2026-08-20  7:20:45 0 [Note] InnoDB: File system buffers for log disabled (block size=512 bytes)
+db-1  | 2026-08-20T07:20:45.177002683Z 2026-08-20  7:20:45 0 [Note] InnoDB: End of log at LSN=44404
+db-1  | 2026-08-20T07:20:45.218851413Z 2026-08-20  7:20:45 0 [Note] InnoDB: 128 rollback segments are active.
+db-1  | 2026-08-20T07:20:45.219961117Z 2026-08-20  7:20:45 0 [Note] InnoDB: Setting file './ibtmp1' size to 12.000MiB. Physically writing the file full; Please wait ...
+db-1  | 2026-08-20T07:20:45.220048771Z 2026-08-20  7:20:45 0 [Note] InnoDB: File './ibtmp1' size is now 12.000MiB.
+db-1  | 2026-08-20T07:20:45.221472631Z 2026-08-20  7:20:45 0 [Note] InnoDB: log sequence number 44404; transaction id 14
+db-1  | 2026-08-20T07:20:45.221716912Z 2026-08-20  7:20:45 0 [Note] Plugin 'FEEDBACK' is disabled.
+db-1  | 2026-08-20T07:20:45.243455958Z 2026-08-20  7:20:45 0 [Note] mariadbd: ready for connections.
+db-1  | 2026-08-20T07:20:45.243498348Z Version: '10.11.18-MariaDB-ubu2204'  socket: '/run/mysqld/mysqld.sock'  port: 0  mariadb.org binary distribution
+db-1  | 2026-08-20T07:20:46.114968034Z 2026-08-20 07:20:46+00:00 [Note] [Entrypoint]: Temporary server started.
+db-1  | 2026-08-20T07:20:51.039420149Z 2026-08-20 07:20:51+00:00 [Note] [Entrypoint]: Creating database example
+db-1  | 2026-08-20T07:20:51.042842282Z 2026-08-20 07:20:51+00:00 [Note] [Entrypoint]: Securing system users (equivalent to running mysql_secure_installation)
+db-1  | 2026-08-20T07:20:51.065187706Z 
+db-1  | 2026-08-20T07:20:51.068444867Z 2026-08-20 07:20:51+00:00 [Note] [Entrypoint]: Stopping temporary server
+db-1  | 2026-08-20T07:20:51.068729479Z 2026-08-20  7:20:51 0 [Note] mariadbd (initiated by: unknown): Normal shutdown
+db-1  | 2026-08-20T07:20:51.069180920Z 2026-08-20  7:20:51 0 [Note] InnoDB: FTS optimize thread exiting.
+db-1  | 2026-08-20T07:20:51.082023984Z 2026-08-20  7:20:51 0 [Note] InnoDB: Starting shutdown...
+db-1  | 2026-08-20T07:20:51.082157048Z 2026-08-20  7:20:51 0 [Note] InnoDB: Dumping buffer pool(s) to /var/lib/mysql/ib_buffer_pool
+db-1  | 2026-08-20T07:20:51.082499432Z 2026-08-20  7:20:51 0 [Note] InnoDB: Buffer pool(s) dump completed at 260820  7:20:51
+db-1  | 2026-08-20T07:20:51.102337034Z 2026-08-20  7:20:51 0 [Note] InnoDB: Removed temporary tablespace data file: "./ibtmp1"
+db-1  | 2026-08-20T07:20:51.102372081Z 2026-08-20  7:20:51 0 [Note] Shutdown completed; log sequence number 44776; transaction id 15
+db-1  | 2026-08-20T07:20:51.105560310Z 2026-08-20  7:20:51 0 [Note] mariadbd: Shutdown complete
+db-1  | 2026-08-20T07:20:51.111944672Z 2026-08-20 07:20:51+00:00 [Note] [Entrypoint]: Temporary server stopped
+db-1  | 2026-08-20T07:20:51.111968774Z 
+db-1  | 2026-08-20T07:20:51.114373866Z 2026-08-20 07:20:51+00:00 [Note] [Entrypoint]: MariaDB init process done. Ready for start up.
+db-1  | 2026-08-20T07:20:51.114401680Z 
+db-1  | 2026-08-20T07:20:51.146485385Z 2026-08-20  7:20:51 0 [Note] Starting MariaDB 10.11.18-MariaDB-ubu2204 source revision 197f92bee02d8e836f529f37625be69b83e7acbd server_uid 8wmSpogbvAT1wT94EYs9yy44J9Y= as process 1
+db-1  | 2026-08-20T07:20:51.171058585Z 2026-08-20  7:20:51 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+db-1  | 2026-08-20T07:20:51.174523638Z 2026-08-20  7:20:51 0 [Note] InnoDB: Number of transaction pools: 1
+db-1  | 2026-08-20T07:20:51.174564739Z 2026-08-20  7:20:51 0 [Note] InnoDB: Using crc32 + pclmulqdq instructions
+db-1  | 2026-08-20T07:20:51.174726615Z 2026-08-20  7:20:51 0 [Note] mariadbd: O_TMPFILE is not supported on /tmp (disabling future attempts)
+db-1  | 2026-08-20T07:20:51.175077358Z 2026-08-20  7:20:51 0 [Warning] mariadbd: io_uring_queue_init() failed with EPERM: sysctl kernel.io_uring_disabled has the value 2, or 1 and the user of the process is not a member of sysctl kernel.io_uring_group. (see man 2 io_uring_setup).
+db-1  | 2026-08-20T07:20:51.175235956Z create_uring failed: falling back to libaio
+db-1  | 2026-08-20T07:20:51.175551380Z 2026-08-20  7:20:51 0 [Note] InnoDB: Using Linux native AIO
+db-1  | 2026-08-20T07:20:51.176758021Z 2026-08-20  7:20:51 0 [Note] InnoDB: innodb_buffer_pool_size_max=8388608m, innodb_buffer_pool_size=128m
+db-1  | 2026-08-20T07:20:51.187855216Z 2026-08-20  7:20:51 0 [Note] InnoDB: Completed initialization of buffer pool
+db-1  | 2026-08-20T07:20:51.190024984Z 2026-08-20  7:20:51 0 [Note] InnoDB: File system buffers for log disabled (block size=512 bytes)
+db-1  | 2026-08-20T07:20:51.206816227Z 2026-08-20  7:20:51 0 [Note] InnoDB: End of log at LSN=44776
+db-1  | 2026-08-20T07:20:51.239421080Z 2026-08-20  7:20:51 0 [Note] InnoDB: 128 rollback segments are active.
+db-1  | 2026-08-20T07:20:51.240210899Z 2026-08-20  7:20:51 0 [Note] InnoDB: Setting file './ibtmp1' size to 12.000MiB. Physically writing the file full; Please wait ...
+db-1  | 2026-08-20T07:20:51.240398282Z 2026-08-20  7:20:51 0 [Note] InnoDB: File './ibtmp1' size is now 12.000MiB.
+db-1  | 2026-08-20T07:20:51.241554766Z 2026-08-20  7:20:51 0 [Note] InnoDB: log sequence number 44776; transaction id 15
+db-1  | 2026-08-20T07:20:51.242048963Z 2026-08-20  7:20:51 0 [Note] InnoDB: Loading buffer pool(s) from /var/lib/mysql/ib_buffer_pool
+db-1  | 2026-08-20T07:20:51.242254039Z 2026-08-20  7:20:51 0 [Note] Plugin 'FEEDBACK' is disabled.
+db-1  | 2026-08-20T07:20:51.244048837Z 2026-08-20  7:20:51 0 [Warning] You need to use --log-bin to make --expire-logs-days or --binlog-expire-logs-seconds work.
+db-1  | 2026-08-20T07:20:51.244688194Z 2026-08-20  7:20:51 0 [Note] InnoDB: Buffer pool(s) load completed at 260820  7:20:51
+db-1  | 2026-08-20T07:20:51.248887671Z 2026-08-20  7:20:51 0 [Note] Server socket created on IP: '0.0.0.0', port: '3306'.
+db-1  | 2026-08-20T07:20:51.249214606Z 2026-08-20  7:20:51 0 [Note] Server socket created on IP: '::', port: '3306'.
+db-1  | 2026-08-20T07:20:51.259679286Z 2026-08-20  7:20:51 0 [Note] mariadbd: ready for connections.
+db-1  | 2026-08-20T07:20:51.259716021Z Version: '10.11.18-MariaDB-ubu2204'  socket: '/run/mysqld/mysqld.sock'  port: 3306  mariadb.org binary distribution
+proxy-1  | 2026-08-20T07:54:06.615303282Z 2026/08/20 07:54:06 [notice] 7#7: start worker processes
+proxy-1  | 2026-08-20T07:54:06.615766284Z 2026/08/20 07:54:06 [notice] 7#7: start worker process 22
+proxy-1  | 2026-08-20T07:54:06.616282029Z 2026/08/20 07:54:06 [notice] 7#7: start worker process 23
+proxy-1  | 2026-08-20T07:54:06.616776469Z 2026/08/20 07:54:06 [notice] 7#7: start worker process 24
+proxy-1  | 2026-08-20T07:54:06.617177466Z 2026/08/20 07:54:06 [notice] 7#7: start worker process 25
+proxy-1  | 2026-08-20T07:54:11.679054694Z 127.0.0.1 - - [20/Aug/2026:07:54:11 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1  | 2026-08-20T07:54:21.817283978Z 127.0.0.1 - - [20/Aug/2026:07:54:21 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1  | 2026-08-20T07:54:31.952840470Z 127.0.0.1 - - [20/Aug/2026:07:54:31 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+backend-1  | 2026-08-20T07:57:14.035994405Z 172.24.0.3 - - [20/Aug/2026:07:57:14 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:57:19.055135713Z 127.0.0.1 - - [20/Aug/2026:07:57:19 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:57:24.170069794Z 172.24.0.3 - - [20/Aug/2026:07:57:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:57:29.745665564Z 127.0.0.1 - - [20/Aug/2026:07:57:29 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:57:34.300323593Z 172.24.0.3 - - [20/Aug/2026:07:57:34 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:57:40.419033931Z 127.0.0.1 - - [20/Aug/2026:07:57:40 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:57:44.431654107Z 172.24.0.3 - - [20/Aug/2026:07:57:44 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:57:51.086822800Z 127.0.0.1 - - [20/Aug/2026:07:57:51 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:57:54.561630051Z 172.24.0.3 - - [20/Aug/2026:07:57:54 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:58:01.794051859Z 127.0.0.1 - - [20/Aug/2026:07:58:01 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:58:04.692904522Z 172.24.0.3 - - [20/Aug/2026:07:58:04 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:58:12.615857359Z 127.0.0.1 - - [20/Aug/2026:07:58:12 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:58:14.833237712Z 172.24.0.3 - - [20/Aug/2026:07:58:14 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:58:23.315517491Z 127.0.0.1 - - [20/Aug/2026:07:58:23 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:58:24.962644522Z 172.24.0.3 - - [20/Aug/2026:07:58:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:58:34.032497134Z 127.0.0.1 - - [20/Aug/2026:07:58:34 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:58:35.096286275Z 172.24.0.3 - - [20/Aug/2026:07:58:35 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:58:44.711982538Z 127.0.0.1 - - [20/Aug/2026:07:58:44 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:58:45.236849297Z 172.24.0.3 - - [20/Aug/2026:07:58:45 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:58:55.308229092Z 172.24.0.3 - - [20/Aug/2026:07:58:55 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:58:55.572126098Z 127.0.0.1 - - [20/Aug/2026:07:58:55 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:59:05.439708215Z 172.24.0.3 - - [20/Aug/2026:07:59:05 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:59:06.282008202Z 127.0.0.1 - - [20/Aug/2026:07:59:06 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:59:15.574460141Z 172.24.0.3 - - [20/Aug/2026:07:59:15 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:59:16.947624349Z 127.0.0.1 - - [20/Aug/2026:07:59:16 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:59:25.715579879Z 172.24.0.3 - - [20/Aug/2026:07:59:25 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:59:27.656870190Z 127.0.0.1 - - [20/Aug/2026:07:59:27 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:59:35.848830626Z 172.24.0.3 - - [20/Aug/2026:07:59:35 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:59:38.462162314Z 127.0.0.1 - - [20/Aug/2026:07:59:38 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:59:45.951190744Z 172.24.0.3 - - [20/Aug/2026:07:59:45 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:59:49.156460714Z 127.0.0.1 - - [20/Aug/2026:07:59:49 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T07:59:56.087332043Z 172.24.0.3 - - [20/Aug/2026:07:59:56 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T07:59:59.892184928Z 127.0.0.1 - - [20/Aug/2026:07:59:59 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T08:00:06.214474521Z 172.24.0.3 - - [20/Aug/2026:08:00:06 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T08:00:10.580344587Z 127.0.0.1 - - [20/Aug/2026:08:00:10 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T08:00:16.346293628Z 172.24.0.3 - - [20/Aug/2026:08:00:16 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T08:00:21.320459871Z 127.0.0.1 - - [20/Aug/2026:08:00:21 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T08:00:26.480597277Z 172.24.0.3 - - [20/Aug/2026:08:00:26 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T08:00:32.139764187Z 127.0.0.1 - - [20/Aug/2026:08:00:32 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T08:00:36.645898948Z 172.24.0.3 - - [20/Aug/2026:08:00:36 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T08:00:42.830947259Z 127.0.0.1 - - [20/Aug/2026:08:00:42 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T08:00:46.789621412Z 172.24.0.3 - - [20/Aug/2026:08:00:46 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T08:00:53.495536031Z 127.0.0.1 - - [20/Aug/2026:08:00:53 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T08:00:56.917483416Z 172.24.0.3 - - [20/Aug/2026:08:00:56 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T08:01:04.260177012Z 127.0.0.1 - - [20/Aug/2026:08:01:04 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T08:01:07.056697945Z 172.24.0.3 - - [20/Aug/2026:08:01:07 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T08:01:15.232070128Z 127.0.0.1 - - [20/Aug/2026:08:01:15 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+backend-1  | 2026-08-20T08:01:17.183982220Z 172.24.0.3 - - [20/Aug/2026:08:01:17 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget"
+backend-1  | 2026-08-20T08:01:18.394911188Z 172.24.0.3 - - [20/Aug/2026:08:01:18 +0000] "GET / HTTP/1.1" 200 132 "-" "curl/7.76.1"
+backend-1  | 2026-08-20T08:01:19.843038232Z 127.0.0.1 - - [20/Aug/2026:08:01:19 +0000] "GET / HTTP/1.1" 200 132 "-" "Python-urllib/3.12"
+proxy-1    | 2026-08-20T07:54:42.083545649Z 127.0.0.1 - - [20/Aug/2026:07:54:42 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:54:52.207893449Z 127.0.0.1 - - [20/Aug/2026:07:54:52 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:55:02.342634493Z 127.0.0.1 - - [20/Aug/2026:07:55:02 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:55:12.464932560Z 127.0.0.1 - - [20/Aug/2026:07:55:12 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:55:22.597703310Z 127.0.0.1 - - [20/Aug/2026:07:55:22 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:55:27.543970585Z 172.24.0.1 - - [20/Aug/2026:07:55:27 +0000] "GET / HTTP/1.1" 200 132 "-" "curl/7.76.1" "-"
+proxy-1    | 2026-08-20T07:55:32.736313320Z 127.0.0.1 - - [20/Aug/2026:07:55:32 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:55:42.885158999Z 127.0.0.1 - - [20/Aug/2026:07:55:42 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:55:52.990633888Z 127.0.0.1 - - [20/Aug/2026:07:55:52 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:56:03.127077016Z 127.0.0.1 - - [20/Aug/2026:07:56:03 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:56:13.261847065Z 127.0.0.1 - - [20/Aug/2026:07:56:13 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:56:23.388479390Z 127.0.0.1 - - [20/Aug/2026:07:56:23 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:56:33.520847794Z 127.0.0.1 - - [20/Aug/2026:07:56:33 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:56:43.650481600Z 127.0.0.1 - - [20/Aug/2026:07:56:43 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:56:53.774898744Z 127.0.0.1 - - [20/Aug/2026:07:56:53 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:57:03.905532452Z 127.0.0.1 - - [20/Aug/2026:07:57:03 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:57:14.035885225Z 127.0.0.1 - - [20/Aug/2026:07:57:14 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:57:24.169722044Z 127.0.0.1 - - [20/Aug/2026:07:57:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:57:34.300213964Z 127.0.0.1 - - [20/Aug/2026:07:57:34 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:57:44.431369130Z 127.0.0.1 - - [20/Aug/2026:07:57:44 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:57:54.561461251Z 127.0.0.1 - - [20/Aug/2026:07:57:54 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:58:04.692569823Z 127.0.0.1 - - [20/Aug/2026:07:58:04 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:58:14.832858594Z 127.0.0.1 - - [20/Aug/2026:07:58:14 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:58:24.962759794Z 127.0.0.1 - - [20/Aug/2026:07:58:24 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:58:35.095646450Z 127.0.0.1 - - [20/Aug/2026:07:58:35 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:58:45.236223410Z 127.0.0.1 - - [20/Aug/2026:07:58:45 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:58:55.308039896Z 127.0.0.1 - - [20/Aug/2026:07:58:55 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:59:05.439365921Z 127.0.0.1 - - [20/Aug/2026:07:59:05 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:59:15.574196015Z 127.0.0.1 - - [20/Aug/2026:07:59:15 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:59:25.715470749Z 127.0.0.1 - - [20/Aug/2026:07:59:25 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:59:35.848456782Z 127.0.0.1 - - [20/Aug/2026:07:59:35 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:59:45.951037756Z 127.0.0.1 - - [20/Aug/2026:07:59:45 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T07:59:56.087013607Z 127.0.0.1 - - [20/Aug/2026:07:59:56 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T08:00:06.214329035Z 127.0.0.1 - - [20/Aug/2026:08:00:06 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T08:00:16.346015986Z 127.0.0.1 - - [20/Aug/2026:08:00:16 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T08:00:26.480297818Z 127.0.0.1 - - [20/Aug/2026:08:00:26 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T08:00:36.651436341Z 127.0.0.1 - - [20/Aug/2026:08:00:36 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T08:00:46.789435701Z 127.0.0.1 - - [20/Aug/2026:08:00:46 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T08:00:56.917784820Z 127.0.0.1 - - [20/Aug/2026:08:00:56 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T08:01:07.056383195Z 127.0.0.1 - - [20/Aug/2026:08:01:07 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T08:01:17.183662006Z 127.0.0.1 - - [20/Aug/2026:08:01:17 +0000] "GET / HTTP/1.1" 200 132 "-" "Wget" "-"
+proxy-1    | 2026-08-20T08:01:18.394176294Z 172.24.0.1 - - [20/Aug/2026:08:01:18 +0000] "GET / HTTP/1.1" 200 132 "-" "curl/7.76.1" "-"
