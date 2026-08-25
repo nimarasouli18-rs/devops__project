@@ -6,8 +6,8 @@
 
   vars:
     deployment_dir: /opt/nginx-flask-mysql
-    deployment_user: rahmati
-    deployment_group: rahmati
+    deployment_user: daneshkar
+    deployment_group: daneshkar
     application_domain: myapp.test
 
   tasks:

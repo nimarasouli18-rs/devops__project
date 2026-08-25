@@ -24,7 +24,7 @@ final_structure.txt
 فایل `.gitignore` موجود در بسته را در Root پروژه قرار دهید:
 
 ```bash
-cd ~/naserrahmati_kubernetes_02
+cd ~/naserdaneshkar_kubernetes_02
 
 cp /path/to/stage_10_delivery/.gitignore .gitignore
 ```
@@ -50,7 +50,7 @@ Certificate private keys
 ## ۳. Initialize کردن Repository
 
 ```bash
-cd ~/naserrahmati_kubernetes_02
+cd ~/naserdaneshkar_kubernetes_02
 
 git init
 git branch -M main

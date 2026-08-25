@@ -145,16 +145,16 @@
         line: certificates/
         state: present
         create: true
-        owner: rahmati
-        group: rahmati
+        owner: daneshkar
+        group: daneshkar
         mode: "0644"
 
     - name: Copy the SSL-enabled Nginx configuration
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/nginx_ssl_config.txt"
         dest: "{{ deployment_dir }}/nginx/default.conf"
-        owner: rahmati
-        group: rahmati
+        owner: daneshkar
+        group: daneshkar
         mode: "0644"
         backup: true
 
@@ -162,8 +162,8 @@
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/docker-compose.ssl.yml"
         dest: "{{ deployment_dir }}/docker-compose.yml"
-        owner: rahmati
-        group: rahmati
+        owner: daneshkar
+        group: daneshkar
         mode: "0644"
         backup: true
 
@@ -173,8 +173,8 @@
         regexp: "^HTTPS_PORT="
         line: "HTTPS_PORT=443"
         state: present
-        owner: rahmati
-        group: rahmati
+        owner: daneshkar
+        group: daneshkar
         mode: "0640"
 
     - name: Validate the Docker Compose configuration

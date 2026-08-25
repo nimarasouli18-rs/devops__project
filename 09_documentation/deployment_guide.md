@@ -19,8 +19,8 @@ Controller:
 
 Target:
   OS: Ubuntu 22.04.5 LTS
-  IP: 192.168.200.54
-  SSH User: rahmati
+  IP: 192.168.1.104
+  SSH User: daneshkar
 
 Application:
   Domain: myapp.test
