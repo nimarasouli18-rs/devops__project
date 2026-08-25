@@ -1,0 +1,109 @@
+========================================
+Final Project Structure
+========================================
+
+Generated at: 2026-08-21T23:53:16+03:30
+
+Excluded from this report:
+- .git metadata
+- external clone: 03_project_clone/awesome-compose
+- runtime .env files
+- database password files
+- private certificate material
+
+.
+├── .gitignore
+├── 01_environment
+│   ├── server_connection.txt
+│   ├── server_info.md
+│   └── server_info.txt
+├── 02_ansible_setup
+│   ├── README.md
+│   ├── ansible.cfg
+│   ├── facts.txt
+│   ├── inventory
+│   ├── ping_test.txt
+│   ├── playbook_output.txt
+│   ├── requirements.yml
+│   ├── server_setup.yml
+│   ├── verification.txt
+│   └── verification.yml
+├── 03_project_clone
+│   ├── project_info.md
+│   └── project_structure.txt
+├── 04_docker
+│   ├── .dockerignore
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── Dockerfile
+│   ├── app
+│   │   ├── hello.py
+│   │   └── requirements.txt
+│   ├── build_log.txt
+│   ├── compose_explanation.md
+│   ├── container_status.txt
+│   ├── docker-compose.yml
+│   ├── dockerfile_explanation.md
+│   ├── nginx
+│   │   └── default.conf
+│   ├── secrets
+│   │   └── .gitkeep
+│   └── test_results.txt
+├── 05_deployment
+│   ├── collect_results.yml
+│   ├── container_logs.txt
+│   ├── container_status.txt
+│   ├── deploy.yml
+│   ├── deploy_log.txt
+│   └── test_results.txt
+├── 06_nginx
+│   ├── README.md
+│   ├── collect_results.sh
+│   ├── configure_nginx.yml
+│   ├── hosts_file.txt
+│   ├── nginx_config.txt
+│   ├── nginx_deploy_log.txt
+│   ├── nginx_explanation.md
+│   └── test_results.txt
+├── 07_ssl
+│   ├── README.md
+│   ├── certificate_info.txt
+│   ├── configure_ssl.yml
+│   ├── docker-compose.ssl.yml
+│   ├── nginx_ssl_config.txt
+│   ├── nginx_ssl_deploy_log.txt
+│   ├── ssl_explanation.md
+│   └── test_results.txt
+├── 08_ansible_automation
+│   ├── README.md
+│   ├── app_vars.yml
+│   ├── automation_design.md
+│   ├── deploy_app.yml
+│   ├── deploy_nginx.yml
+│   ├── nginx_vars.yml
+│   ├── playbook_output.txt
+│   ├── playbook_output_failed_compose_5.4.0.txt
+│   ├── requirements.yml
+│   ├── run_automation.sh
+│   ├── site.yml
+│   ├── templates
+│   │   ├── app.env.j2
+│   │   ├── docker-compose.yml.j2
+│   │   └── nginx.conf.j2
+│   ├── verification.txt
+│   └── verify.yml
+├── 09_documentation
+│   ├── architecture.md
+│   ├── deployment_guide.md
+│   └── troubleshooting.md
+├── 10_delivery
+│   ├── README.md
+│   ├── final_structure.txt
+│   ├── generate_delivery_outputs.sh
+│   ├── git_delivery_guide.md
+│   ├── git_history.txt
+│   ├── project_summary.md
+│   └── team_contribution.md
+└── README.md
+
+14 directories, 79 files
