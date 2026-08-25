@@ -1,0 +1,141 @@
+
+PLAY [Configure self-signed SSL for containerized Nginx] ***********************
+
+TASK [Verify the application has already been deployed] ************************
+ok: [ubuntu_deploy]
+
+TASK [Stop when deployment stage 5 is incomplete] ******************************
+ok: [ubuntu_deploy] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Install OpenSSL] *********************************************************
+ok: [ubuntu_deploy]
+
+TASK [Create the certificate directory] ****************************************
+changed: [ubuntu_deploy]
+
+TASK [Create X.509 certificate extensions file] ********************************
+changed: [ubuntu_deploy]
+
+TASK [Generate the RSA private key] ********************************************
+changed: [ubuntu_deploy]
+
+TASK [Secure the private key permissions] **************************************
+ok: [ubuntu_deploy]
+
+TASK [Generate the certificate signing request] ********************************
+changed: [ubuntu_deploy]
+
+TASK [Set certificate request permissions] *************************************
+ok: [ubuntu_deploy]
+
+TASK [Generate the self-signed certificate from the CSR] ***********************
+changed: [ubuntu_deploy]
+
+TASK [Set certificate permissions] *********************************************
+ok: [ubuntu_deploy]
+
+TASK [Prevent certificates from entering the Docker build context] *************
+changed: [ubuntu_deploy]
+
+TASK [Copy the SSL-enabled Nginx configuration] ********************************
+changed: [ubuntu_deploy]
+
+TASK [Copy the SSL-enabled Docker Compose file] ********************************
+changed: [ubuntu_deploy]
+
+TASK [Configure the HTTPS host port] *******************************************
+changed: [ubuntu_deploy]
+
+TASK [Validate the Docker Compose configuration] *******************************
+ok: [ubuntu_deploy]
+
+TASK [Test the new Nginx configuration with a temporary container] *************
+ok: [ubuntu_deploy]
+
+TASK [Recreate the Nginx proxy with HTTPS enabled] *****************************
+changed: [ubuntu_deploy]
+
+TASK [Wait for HTTPS port 443] *************************************************
+ok: [ubuntu_deploy]
+
+TASK [Test the active Nginx configuration] *************************************
+ok: [ubuntu_deploy]
+
+TASK [Test HTTP to HTTPS redirect from the deployment server] ******************
+ok: [ubuntu_deploy]
+
+TASK [Validate the redirect location] ******************************************
+[WARNING]: Jinja constant strings should not contain embedded templates. This feature will be disabled by default in ansible-core 2.23.
+Origin: /home/naser/naserrahmati_kubernetes_02/07_ssl/configure_ssl.yml:270:13
+
+268       ansible.builtin.assert:
+269         that:
+270           - server_http_redirect.location == "https://{{ application_domain }}/"
+                ^ column 13
+
+Use inline expressions, for example: `when: "{{ a_var }}" == 42` becomes `when: a_var == 42`
+
+ok: [ubuntu_deploy] => {
+    "changed": false,
+    "msg": "HTTP redirect points to the expected HTTPS URL."
+}
+
+TASK [Test HTTPS from the deployment server] ***********************************
+ok: [ubuntu_deploy]
+
+TASK [Read certificate information] ********************************************
+ok: [ubuntu_deploy]
+
+TASK [Verify the certificate request] ******************************************
+ok: [ubuntu_deploy]
+
+TASK [Verify the private key] **************************************************
+ok: [ubuntu_deploy]
+
+TASK [Read private key file metadata] ******************************************
+ok: [ubuntu_deploy]
+
+TASK [Read certificate request metadata] ***************************************
+ok: [ubuntu_deploy]
+
+TASK [Read certificate file metadata] ******************************************
+ok: [ubuntu_deploy]
+
+TASK [Resolve the application domain on the Ansible Controller] ****************
+ok: [ubuntu_deploy -> localhost]
+
+TASK [Test HTTP redirect from the Ansible Controller] **************************
+ok: [ubuntu_deploy -> localhost]
+
+TASK [Test direct HTTPS access from the Ansible Controller] ********************
+ok: [ubuntu_deploy -> localhost]
+
+TASK [Test redirect following from HTTP to HTTPS] ******************************
+ok: [ubuntu_deploy -> localhost]
+
+TASK [Read the certificate served by Nginx from the Controller] ****************
+ok: [ubuntu_deploy -> localhost]
+
+TASK [Write certificate information on the Controller] *************************
+changed: [ubuntu_deploy -> localhost]
+
+TASK [Write SSL test results on the Controller] ********************************
+changed: [ubuntu_deploy -> localhost]
+
+TASK [Display final SSL result] ************************************************
+ok: [ubuntu_deploy] => {
+    "msg": [
+        "HTTP redirect status: 301",
+        "Redirect location: https://myapp.test/",
+        "HTTPS status: 200",
+        "Certificate information: /home/naser/naserrahmati_kubernetes_02/07_ssl/certificate_info.txt",
+        "Test results: /home/naser/naserrahmati_kubernetes_02/07_ssl/test_results.txt"
+    ]
+}
+
+PLAY RECAP *********************************************************************
+ubuntu_deploy              : ok=37   changed=12   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

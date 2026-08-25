@@ -1,0 +1,90 @@
+========================================
+Self-Signed Certificate Information
+========================================
+
+Generated at:
+2026-08-21T15:23:50+03:30
+
+Deployment server:
+192.168.200.54
+
+Domain:
+myapp.test
+
+----------------------------------------
+Certificate Files on Ubuntu Server
+----------------------------------------
+
+Private key:
+/opt/nginx-flask-mysql/certificates/myapp.test.key
+
+Certificate request:
+/opt/nginx-flask-mysql/certificates/myapp.test.csr
+
+Self-signed certificate:
+/opt/nginx-flask-mysql/certificates/myapp.test.crt
+
+Certificate extensions:
+/opt/nginx-flask-mysql/certificates/myapp.test.ext
+
+----------------------------------------
+File Permissions
+----------------------------------------
+
+Private key:
+owner=root
+group=root
+mode=0600
+size=2484 bytes
+
+Certificate request:
+owner=root
+group=root
+mode=0644
+size=1415 bytes
+
+Certificate:
+owner=root
+group=root
+mode=0644
+size=1728 bytes
+
+----------------------------------------
+Private Key Validation
+----------------------------------------
+
+Key is valid
+
+
+----------------------------------------
+Certificate Request Validation
+----------------------------------------
+
+subject=C = AZ, ST = Baku, L = Baku, O = DevOps Lab, OU = Training, CN = myapp.test
+Certificate request self-signature verify OK
+
+----------------------------------------
+Certificate Details
+----------------------------------------
+
+subject=C = AZ, ST = Baku, L = Baku, O = DevOps Lab, OU = Training, CN = myapp.test
+issuer=C = AZ, ST = Baku, L = Baku, O = DevOps Lab, OU = Training, CN = myapp.test
+serial=5FB597ECA76A2A2911027BEC3B62EF7835AE6CEF
+notBefore=Aug 21 11:53:23 2026 GMT
+notAfter=Aug 21 11:53:23 2027 GMT
+sha256 Fingerprint=6A:2E:65:C2:D1:D0:51:DA:34:F2:3B:48:F6:28:89:F0:98:17:BC:96:88:B8:11:AA:50:97:52:DB:0B:8B:DD:D0
+X509v3 Subject Alternative Name: 
+    DNS:myapp.test, IP Address:192.168.200.54
+
+----------------------------------------
+Certificate Served by Nginx
+----------------------------------------
+
+subject=C=AZ, ST=Baku, L=Baku, O=DevOps Lab, OU=Training, CN=myapp.test
+issuer=C=AZ, ST=Baku, L=Baku, O=DevOps Lab, OU=Training, CN=myapp.test
+serial=5FB597ECA76A2A2911027BEC3B62EF7835AE6CEF
+notBefore=Aug 21 11:53:23 2026 GMT
+notAfter=Aug 21 11:53:23 2027 GMT
+sha256 Fingerprint=6A:2E:65:C2:D1:D0:51:DA:34:F2:3B:48:F6:28:89:F0:98:17:BC:96:88:B8:11:AA:50:97:52:DB:0B:8B:DD:D0
+X509v3 Subject Alternative Name: 
+    DNS:myapp.test, IP Address:192.168.200.54

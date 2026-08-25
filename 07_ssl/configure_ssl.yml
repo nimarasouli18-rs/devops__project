@@ -1,0 +1,625 @@
+---
+- name: Configure self-signed SSL for containerized Nginx
+  hosts: deployment_servers
+  become: true
+  gather_facts: false
+
+  vars:
+    deployment_dir: /opt/nginx-flask-mysql
+    certificates_dir: "{{ deployment_dir }}/certificates"
+
+    application_domain: myapp.test
+    application_ip: "{{ ansible_host }}"
+
+    private_key_path: "{{ certificates_dir }}/myapp.test.key"
+    certificate_request_path: "{{ certificates_dir }}/myapp.test.csr"
+    certificate_path: "{{ certificates_dir }}/myapp.test.crt"
+    certificate_extensions_path: "{{ certificates_dir }}/myapp.test.ext"
+
+    certificate_days: "365"
+    private_key_bits: "3072"
+
+    generated_at: >-
+      {{ lookup('ansible.builtin.pipe', 'date --iso-8601=seconds') }}
+
+  tasks:
+    - name: Verify the application has already been deployed
+      ansible.builtin.stat:
+        path: "{{ deployment_dir }}/docker-compose.yml"
+      register: deployed_compose
+
+    - name: Stop when deployment stage 5 is incomplete
+      ansible.builtin.assert:
+        that:
+          - deployed_compose.stat.exists
+        fail_msg: >-
+          The deployed Compose file was not found at
+          {{ deployment_dir }}/docker-compose.yml.
+          Complete deployment stage 5 before configuring SSL.
+
+    - name: Install OpenSSL
+      ansible.builtin.apt:
+        name:
+          - openssl
+          - ca-certificates
+        state: present
+        update_cache: true
+
+    - name: Create the certificate directory
+      ansible.builtin.file:
+        path: "{{ certificates_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0750"
+
+    - name: Create X.509 certificate extensions file
+      ansible.builtin.copy:
+        dest: "{{ certificate_extensions_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          [v3_req]
+          basicConstraints = critical,CA:FALSE
+          keyUsage = critical,digitalSignature,keyEncipherment
+          extendedKeyUsage = serverAuth
+          subjectAltName = DNS:{{ application_domain }},IP:{{ application_ip }}
+          subjectKeyIdentifier = hash
+
+    - name: Generate the RSA private key
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - genrsa
+          - -out
+          - "{{ private_key_path }}"
+          - "{{ private_key_bits }}"
+        creates: "{{ private_key_path }}"
+
+    - name: Secure the private key permissions
+      ansible.builtin.file:
+        path: "{{ private_key_path }}"
+        state: file
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Generate the certificate signing request
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - req
+          - -new
+          - -sha256
+          - -key
+          - "{{ private_key_path }}"
+          - -out
+          - "{{ certificate_request_path }}"
+          - -subj
+          - "/C=AZ/ST=Baku/L=Baku/O=DevOps Lab/OU=Training/CN={{ application_domain }}"
+          - -addext
+          - "subjectAltName=DNS:{{ application_domain }},IP:{{ application_ip }}"
+        creates: "{{ certificate_request_path }}"
+
+    - name: Set certificate request permissions
+      ansible.builtin.file:
+        path: "{{ certificate_request_path }}"
+        state: file
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Generate the self-signed certificate from the CSR
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -req
+          - -sha256
+          - -days
+          - "{{ certificate_days }}"
+          - -in
+          - "{{ certificate_request_path }}"
+          - -signkey
+          - "{{ private_key_path }}"
+          - -out
+          - "{{ certificate_path }}"
+          - -extfile
+          - "{{ certificate_extensions_path }}"
+          - -extensions
+          - v3_req
+        creates: "{{ certificate_path }}"
+
+    - name: Set certificate permissions
+      ansible.builtin.file:
+        path: "{{ certificate_path }}"
+        state: file
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Prevent certificates from entering the Docker build context
+      ansible.builtin.lineinfile:
+        path: "{{ deployment_dir }}/.dockerignore"
+        line: certificates/
+        state: present
+        create: true
+        owner: rahmati
+        group: rahmati
+        mode: "0644"
+
+    - name: Copy the SSL-enabled Nginx configuration
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/nginx_ssl_config.txt"
+        dest: "{{ deployment_dir }}/nginx/default.conf"
+        owner: rahmati
+        group: rahmati
+        mode: "0644"
+        backup: true
+
+    - name: Copy the SSL-enabled Docker Compose file
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/docker-compose.ssl.yml"
+        dest: "{{ deployment_dir }}/docker-compose.yml"
+        owner: rahmati
+        group: rahmati
+        mode: "0644"
+        backup: true
+
+    - name: Configure the HTTPS host port
+      ansible.builtin.lineinfile:
+        path: "{{ deployment_dir }}/.env"
+        regexp: "^HTTPS_PORT="
+        line: "HTTPS_PORT=443"
+        state: present
+        owner: rahmati
+        group: rahmati
+        mode: "0640"
+
+    - name: Validate the Docker Compose configuration
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - config
+          - --quiet
+        chdir: "{{ deployment_dir }}"
+      changed_when: false
+
+    - name: Test the new Nginx configuration with a temporary container
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - run
+          - --rm
+          - --no-deps
+          - proxy
+          - nginx
+          - -t
+        chdir: "{{ deployment_dir }}"
+      register: temporary_nginx_test
+      changed_when: false
+
+    - name: Recreate the Nginx proxy with HTTPS enabled
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - up
+          - --detach
+          - --force-recreate
+          - --no-deps
+          - proxy
+        chdir: "{{ deployment_dir }}"
+      register: proxy_recreate
+      changed_when: true
+
+    - name: Wait for HTTPS port 443
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 443
+        state: started
+        timeout: 60
+
+    - name: Test the active Nginx configuration
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - exec
+          - -T
+          - proxy
+          - nginx
+          - -t
+        chdir: "{{ deployment_dir }}"
+      register: active_nginx_test
+      changed_when: false
+
+    - name: Test HTTP to HTTPS redirect from the deployment server
+      ansible.builtin.uri:
+        url: http://127.0.0.1/
+        method: GET
+        headers:
+          Host: "{{ application_domain }}"
+        follow_redirects: none
+        status_code: 301
+        return_content: false
+      register: server_http_redirect
+
+    - name: Validate the redirect location
+      ansible.builtin.assert:
+        that:
+          - server_http_redirect.location == "https://{{ application_domain }}/"
+        fail_msg: >-
+          Unexpected redirect location:
+          {{ server_http_redirect.location | default('missing') }}
+        success_msg: "HTTP redirect points to the expected HTTPS URL."
+
+    - name: Test HTTPS from the deployment server
+      ansible.builtin.uri:
+        url: https://127.0.0.1/
+        method: GET
+        headers:
+          Host: "{{ application_domain }}"
+        validate_certs: false
+        status_code: 200
+        return_content: true
+      register: server_https_test
+
+    - name: Read certificate information
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -in
+          - "{{ certificate_path }}"
+          - -noout
+          - -subject
+          - -issuer
+          - -serial
+          - -dates
+          - -fingerprint
+          - -sha256
+          - -ext
+          - subjectAltName
+      register: certificate_details
+      changed_when: false
+
+    - name: Verify the certificate request
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - req
+          - -in
+          - "{{ certificate_request_path }}"
+          - -noout
+          - -verify
+          - -subject
+      register: certificate_request_details
+      changed_when: false
+
+    - name: Verify the private key
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - pkey
+          - -in
+          - "{{ private_key_path }}"
+          - -check
+          - -noout
+      register: private_key_check
+      changed_when: false
+
+    - name: Read private key file metadata
+      ansible.builtin.stat:
+        path: "{{ private_key_path }}"
+        get_checksum: false
+      register: private_key_stat
+
+    - name: Read certificate request metadata
+      ansible.builtin.stat:
+        path: "{{ certificate_request_path }}"
+        get_checksum: false
+      register: certificate_request_stat
+
+    - name: Read certificate file metadata
+      ansible.builtin.stat:
+        path: "{{ certificate_path }}"
+        get_checksum: false
+      register: certificate_stat
+
+    - name: Resolve the application domain on the Ansible Controller
+      ansible.builtin.command:
+        argv:
+          - getent
+          - ahostsv4
+          - "{{ application_domain }}"
+      register: controller_domain_resolution
+      changed_when: false
+      delegate_to: localhost
+      become: false
+
+    - name: Test HTTP redirect from the Ansible Controller
+      ansible.builtin.command:
+        argv:
+          - curl
+          - --silent
+          - --show-error
+          - --head
+          - --max-time
+          - "15"
+          - "http://{{ application_domain }}/"
+      register: controller_http_redirect
+      changed_when: false
+      delegate_to: localhost
+      become: false
+
+    - name: Test direct HTTPS access from the Ansible Controller
+      ansible.builtin.command:
+        argv:
+          - curl
+          - --insecure
+          - --silent
+          - --show-error
+          - --include
+          - --max-time
+          - "15"
+          - "https://{{ application_domain }}/"
+      register: controller_https_test
+      changed_when: false
+      delegate_to: localhost
+      become: false
+
+    - name: Test redirect following from HTTP to HTTPS
+      ansible.builtin.command:
+        argv:
+          - curl
+          - --insecure
+          - --location
+          - --silent
+          - --show-error
+          - --include
+          - --max-time
+          - "20"
+          - "http://{{ application_domain }}/"
+      register: controller_follow_redirect_test
+      changed_when: false
+      delegate_to: localhost
+      become: false
+
+    - name: Read the certificate served by Nginx from the Controller
+      ansible.builtin.command:
+        argv:
+          - /bin/bash
+          - -lc
+          - >-
+            printf '' |
+            openssl s_client
+            -connect {{ application_domain }}:443
+            -servername {{ application_domain }}
+            2>/dev/null |
+            openssl x509
+            -noout
+            -subject
+            -issuer
+            -serial
+            -dates
+            -fingerprint
+            -sha256
+            -ext subjectAltName
+      register: served_certificate_details
+      changed_when: false
+      delegate_to: localhost
+      become: false
+
+    - name: Write certificate information on the Controller
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/certificate_info.txt"
+        mode: "0644"
+        content: |
+          ========================================
+          Self-Signed Certificate Information
+          ========================================
+
+          Generated at:
+          {{ generated_at }}
+
+          Deployment server:
+          {{ application_ip }}
+
+          Domain:
+          {{ application_domain }}
+
+          ----------------------------------------
+          Certificate Files on Ubuntu Server
+          ----------------------------------------
+
+          Private key:
+          {{ private_key_path }}
+
+          Certificate request:
+          {{ certificate_request_path }}
+
+          Self-signed certificate:
+          {{ certificate_path }}
+
+          Certificate extensions:
+          {{ certificate_extensions_path }}
+
+          ----------------------------------------
+          File Permissions
+          ----------------------------------------
+
+          Private key:
+          owner={{ private_key_stat.stat.pw_name }}
+          group={{ private_key_stat.stat.gr_name }}
+          mode={{ private_key_stat.stat.mode }}
+          size={{ private_key_stat.stat.size }} bytes
+
+          Certificate request:
+          owner={{ certificate_request_stat.stat.pw_name }}
+          group={{ certificate_request_stat.stat.gr_name }}
+          mode={{ certificate_request_stat.stat.mode }}
+          size={{ certificate_request_stat.stat.size }} bytes
+
+          Certificate:
+          owner={{ certificate_stat.stat.pw_name }}
+          group={{ certificate_stat.stat.gr_name }}
+          mode={{ certificate_stat.stat.mode }}
+          size={{ certificate_stat.stat.size }} bytes
+
+          ----------------------------------------
+          Private Key Validation
+          ----------------------------------------
+
+          {{ private_key_check.stdout | default('') }}
+          {{ private_key_check.stderr | default('') }}
+
+          ----------------------------------------
+          Certificate Request Validation
+          ----------------------------------------
+
+          {{ certificate_request_details.stdout | default('') }}
+          {{ certificate_request_details.stderr | default('') }}
+
+          ----------------------------------------
+          Certificate Details
+          ----------------------------------------
+
+          {{ certificate_details.stdout }}
+
+          ----------------------------------------
+          Certificate Served by Nginx
+          ----------------------------------------
+
+          {{ served_certificate_details.stdout }}
+      delegate_to: localhost
+      become: false
+
+    - name: Write SSL test results on the Controller
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/test_results.txt"
+        mode: "0644"
+        content: |
+          ========================================
+          SSL/TLS Test Results
+          ========================================
+
+          Generated at:
+          {{ generated_at }}
+
+          Domain:
+          {{ application_domain }}
+
+          Server IP:
+          {{ application_ip }}
+
+          ----------------------------------------
+          Nginx Configuration Test
+          ----------------------------------------
+
+          Temporary container test:
+
+          {{ temporary_nginx_test.stdout | default('') }}
+          {{ temporary_nginx_test.stderr | default('') }}
+
+          Active container test:
+
+          {{ active_nginx_test.stdout | default('') }}
+          {{ active_nginx_test.stderr | default('') }}
+
+          ----------------------------------------
+          Test 1: HTTP Redirect on Ubuntu Server
+          ----------------------------------------
+
+          HTTP status:
+          {{ server_http_redirect.status }}
+
+          Location:
+          {{ server_http_redirect.location }}
+
+          Result:
+          PASSED
+
+          ----------------------------------------
+          Test 2: HTTPS on Ubuntu Server
+          ----------------------------------------
+
+          HTTP status:
+          {{ server_https_test.status }}
+
+          Response:
+          {{ server_https_test.content }}
+
+          Result:
+          PASSED
+
+          ----------------------------------------
+          Domain Resolution on AlmaLinux Controller
+          ----------------------------------------
+
+          {{ controller_domain_resolution.stdout }}
+
+          ----------------------------------------
+          Test 3: HTTP Redirect from Controller
+          ----------------------------------------
+
+          {{ controller_http_redirect.stdout }}
+
+          ----------------------------------------
+          Test 4: Direct HTTPS from Controller
+          ----------------------------------------
+
+          {{ controller_https_test.stdout }}
+
+          ----------------------------------------
+          Test 5: Follow HTTP Redirect to HTTPS
+          ----------------------------------------
+
+          {{ controller_follow_redirect_test.stdout }}
+
+          ----------------------------------------
+          Served Certificate Information
+          ----------------------------------------
+
+          {{ served_certificate_details.stdout }}
+
+          ----------------------------------------
+          Final Result
+          ----------------------------------------
+
+          HTTP redirect test: PASSED
+          HTTPS connection test: PASSED
+          Nginx configuration test: PASSED
+          Certificate loading test: PASSED
+
+          Overall SSL/TLS configuration: PASSED
+      delegate_to: localhost
+      become: false
+
+    - name: Display final SSL result
+      ansible.builtin.debug:
+        msg:
+          - "HTTP redirect status: {{ server_http_redirect.status }}"
+          - "Redirect location: {{ server_http_redirect.location }}"
+          - "HTTPS status: {{ server_https_test.status }}"
+          - "Certificate information: {{ playbook_dir }}/certificate_info.txt"
+          - "Test results: {{ playbook_dir }}/test_results.txt"
