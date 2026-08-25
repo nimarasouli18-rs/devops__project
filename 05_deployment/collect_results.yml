@@ -5,7 +5,7 @@
   gather_facts: false
 
   vars:
-    deployment_dir: /opt/nginx-flask-mysql
+    deployment_dir: /04_docker
     generated_at: "{{ lookup('ansible.builtin.pipe', 'date --iso-8601=seconds') }}"
 
   tasks:

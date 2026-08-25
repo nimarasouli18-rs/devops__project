@@ -5,10 +5,10 @@
   gather_facts: false
 
   vars:
-    deployment_dir: /opt/nginx-flask-mysql
+    deployment_dir: /04_docker
 
-    deployment_user: rahmati
-    deployment_group: rahmati
+    deployment_user: daneshkar
+    deployment_group: daneshkar
 
     secret_group: appcontainer
     secret_gid: 10001

@@ -1,331 +1,94 @@
 
-PLAY [Deploy the Flask and MariaDB application services] ***********************
+PLAY [Deploy Nginx Flask MariaDB application] **********************************
 
-TASK [Verify required source files on the Ansible Controller] ******************
-ok: [ubuntu_deploy -> localhost] => (item=Dockerfile)
-ok: [ubuntu_deploy -> localhost] => (item=.dockerignore)
-ok: [ubuntu_deploy -> localhost] => (item=app/hello.py)
-ok: [ubuntu_deploy -> localhost] => (item=app/requirements.txt)
-
-TASK [Stop when a required source file is missing] *****************************
-ok: [ubuntu_deploy] => (item=Dockerfile) => {
-    "ansible_loop_var": "item",
-    "changed": false,
-    "item": {
-        "ansible_loop_var": "item",
-        "changed": false,
-        "failed": false,
-        "item": "Dockerfile",
-        "stat": {
-            "atime": 1787515786.2259643,
-            "attr_flags": "e",
-            "attributes": [
-                "extents"
-            ],
-            "block_size": 4096,
-            "blocks": 8,
-            "charset": "us-ascii",
-            "checksum": "07676b05606464ee23e979966f32f88035debab1",
-            "ctime": 1787515759.600644,
-            "dev": 2051,
-            "device_type": 0,
-            "disk_usage_bytes": 4096,
-            "executable": false,
-            "exists": true,
-            "gid": 1000,
-            "gr_name": "nimarasouli",
-            "inode": 616330,
-            "isblk": false,
-            "ischr": false,
-            "isdir": false,
-            "isfifo": false,
-            "isgid": false,
-            "islnk": false,
-            "isreg": true,
-            "issock": false,
-            "isuid": false,
-            "mimetype": "text/plain",
-            "mode": "0664",
-            "mtime": 1787515759.600644,
-            "nlink": 1,
-            "path": "/home/nimarasouli/Desktop/devops_project/08_ansible_automation/../04_docker/Dockerfile",
-            "pw_name": "nimarasouli",
-            "readable": true,
-            "rgrp": true,
-            "roth": true,
-            "rusr": true,
-            "size": 1093,
-            "uid": 1000,
-            "version": "3621361423",
-            "wgrp": true,
-            "woth": false,
-            "writeable": true,
-            "wusr": true,
-            "xgrp": false,
-            "xoth": false,
-            "xusr": false
-        }
-    },
-    "msg": "All assertions passed"
-}
-ok: [ubuntu_deploy] => (item=.dockerignore) => {
-    "ansible_loop_var": "item",
-    "changed": false,
-    "item": {
-        "ansible_loop_var": "item",
-        "changed": false,
-        "failed": false,
-        "item": ".dockerignore",
-        "stat": {
-            "atime": 1787515786.2219644,
-            "attr_flags": "e",
-            "attributes": [
-                "extents"
-            ],
-            "block_size": 4096,
-            "blocks": 8,
-            "charset": "us-ascii",
-            "checksum": "87048d001642430e616bd2b280be78ae0a6d9d61",
-            "ctime": 1787515759.5949645,
-            "dev": 2051,
-            "device_type": 0,
-            "disk_usage_bytes": 4096,
-            "executable": false,
-            "exists": true,
-            "gid": 1000,
-            "gr_name": "nimarasouli",
-            "inode": 616316,
-            "isblk": false,
-            "ischr": false,
-            "isdir": false,
-            "isfifo": false,
-            "isgid": false,
-            "islnk": false,
-            "isreg": true,
-            "issock": false,
-            "isuid": false,
-            "mimetype": "text/plain",
-            "mode": "0664",
-            "mtime": 1787515759.5949645,
-            "nlink": 1,
-            "path": "/home/nimarasouli/Desktop/devops_project/08_ansible_automation/../04_docker/.dockerignore",
-            "pw_name": "nimarasouli",
-            "readable": true,
-            "rgrp": true,
-            "roth": true,
-            "rusr": true,
-            "size": 176,
-            "uid": 1000,
-            "version": "1319647406",
-            "wgrp": true,
-            "woth": false,
-            "writeable": true,
-            "wusr": true,
-            "xgrp": false,
-            "xoth": false,
-            "xusr": false
-        }
-    },
-    "msg": "All assertions passed"
-}
-ok: [ubuntu_deploy] => (item=app/hello.py) => {
-    "ansible_loop_var": "item",
-    "changed": false,
-    "item": {
-        "ansible_loop_var": "item",
-        "changed": false,
-        "failed": false,
-        "item": "app/hello.py",
-        "stat": {
-            "atime": 1787537620.867831,
-            "attr_flags": "e",
-            "attributes": [
-                "extents"
-            ],
-            "block_size": 4096,
-            "blocks": 8,
-            "charset": "us-ascii",
-            "checksum": "3cb6bdde888c0b66ab2335c0319f46fbfd585208",
-            "ctime": 1787537620.862831,
-            "dev": 2051,
-            "device_type": 0,
-            "disk_usage_bytes": 4096,
-            "executable": true,
-            "exists": true,
-            "gid": 1000,
-            "gr_name": "nimarasouli",
-            "inode": 616332,
-            "isblk": false,
-            "ischr": false,
-            "isdir": false,
-            "isfifo": false,
-            "isgid": false,
-            "islnk": false,
-            "isreg": true,
-            "issock": false,
-            "isuid": false,
-            "mimetype": "text/x-script.python",
-            "mode": "0775",
-            "mtime": 1787537620.862831,
-            "nlink": 1,
-            "path": "/home/nimarasouli/Desktop/devops_project/08_ansible_automation/../04_docker/app/hello.py",
-            "pw_name": "nimarasouli",
-            "readable": true,
-            "rgrp": true,
-            "roth": true,
-            "rusr": true,
-            "size": 1809,
-            "uid": 1000,
-            "version": "2480965914",
-            "wgrp": true,
-            "woth": false,
-            "writeable": true,
-            "wusr": true,
-            "xgrp": true,
-            "xoth": true,
-            "xusr": true
-        }
-    },
-    "msg": "All assertions passed"
-}
-ok: [ubuntu_deploy] => (item=app/requirements.txt) => {
-    "ansible_loop_var": "item",
-    "changed": false,
-    "item": {
-        "ansible_loop_var": "item",
-        "changed": false,
-        "failed": false,
-        "item": "app/requirements.txt",
-        "stat": {
-            "atime": 1787515786.2259643,
-            "attr_flags": "e",
-            "attributes": [
-                "extents"
-            ],
-            "block_size": 4096,
-            "blocks": 8,
-            "charset": "us-ascii",
-            "checksum": "2e876efdb318e2f6ab8b8fada924df31eba94a99",
-            "ctime": 1787515759.6025102,
-            "dev": 2051,
-            "device_type": 0,
-            "disk_usage_bytes": 4096,
-            "executable": true,
-            "exists": true,
-            "gid": 1000,
-            "gr_name": "nimarasouli",
-            "inode": 616333,
-            "isblk": false,
-            "ischr": false,
-            "isdir": false,
-            "isfifo": false,
-            "isgid": false,
-            "islnk": false,
-            "isreg": true,
-            "issock": false,
-            "isuid": false,
-            "mimetype": "text/plain",
-            "mode": "0775",
-            "mtime": 1787515759.6025102,
-            "nlink": 1,
-            "path": "/home/nimarasouli/Desktop/devops_project/08_ansible_automation/../04_docker/app/requirements.txt",
-            "pw_name": "nimarasouli",
-            "readable": true,
-            "rgrp": true,
-            "roth": true,
-            "rusr": true,
-            "size": 60,
-            "uid": 1000,
-            "version": "1128549146",
-            "wgrp": true,
-            "woth": false,
-            "writeable": true,
-            "wusr": true,
-            "xgrp": true,
-            "xoth": true,
-            "xusr": true
-        }
-    },
-    "msg": "All assertions passed"
-}
-
-TASK [Install deployment helper packages] **************************************
+TASK [Ensure OpenSSL is installed] *********************************************
 ok: [ubuntu_deploy]
 
-TASK [Ensure Docker Compose plugin is up to date] ******************************
+TASK [Verify Docker Compose installation] **************************************
 ok: [ubuntu_deploy]
 
-TASK [Read Docker Compose version] *********************************************
-ok: [ubuntu_deploy]
-
-TASK [Require Docker Compose 5.5.0 or newer] ***********************************
+TASK [Display Docker Compose version] ******************************************
 ok: [ubuntu_deploy] => {
-    "changed": false,
-    "msg": "Docker Compose 5.5.0 is supported."
+    "docker_compose_version.stdout_lines": [
+        "Docker Compose version v5.5.0"
+    ]
 }
 
-TASK [Ensure Docker is enabled and running] ************************************
-ok: [ubuntu_deploy]
-
-TASK [Create the host group used by the backend container secret] **************
+TASK [Create host group matching the backend container GID] ********************
 ok: [ubuntu_deploy]
 
 TASK [Create application directories] ******************************************
-ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
-ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/app', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
-ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/nginx', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
-ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/nginx/sites-available', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
-ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/nginx/sites-enabled', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
-ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/certificates', 'owner': 'root', 'group': 'root', 'mode': '0750'})
-ok: [ubuntu_deploy] => (item={'path': '/opt/nginx-flask-mysql/secrets', 'owner': 'root', 'group': 'appcontainer', 'mode': '0750'})
+ok: [ubuntu_deploy] => (item={'path': '/04_docker', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
+ok: [ubuntu_deploy] => (item={'path': '/04_docker/app', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
+ok: [ubuntu_deploy] => (item={'path': '/04_docker/nginx', 'owner': 'daneshkar', 'group': 'daneshkar', 'mode': '0755'})
+ok: [ubuntu_deploy] => (item={'path': '/04_docker/secrets', 'owner': 'root', 'group': 'appcontainer', 'mode': '0750'})
 
-TASK [Copy Dockerfile and application code] ************************************
+TASK [Copy application deployment files] ***************************************
 ok: [ubuntu_deploy] => (item={'src': 'Dockerfile', 'dest': 'Dockerfile', 'mode': '0644'})
-changed: [ubuntu_deploy] => (item={'src': '.dockerignore', 'dest': '.dockerignore', 'mode': '0644'})
+ok: [ubuntu_deploy] => (item={'src': '.dockerignore', 'dest': '.dockerignore', 'mode': '0644'})
+ok: [ubuntu_deploy] => (item={'src': 'docker-compose.yml', 'dest': 'docker-compose.yml', 'mode': '0644'})
+ok: [ubuntu_deploy] => (item={'src': '.env.example', 'dest': '.env.example', 'mode': '0644'})
 ok: [ubuntu_deploy] => (item={'src': 'app/hello.py', 'dest': 'app/hello.py', 'mode': '0644'})
 ok: [ubuntu_deploy] => (item={'src': 'app/requirements.txt', 'dest': 'app/requirements.txt', 'mode': '0644'})
+ok: [ubuntu_deploy] => (item={'src': 'nginx/default.conf', 'dest': 'nginx/default.conf', 'mode': '0644'})
 
-TASK [Prevent certificates from entering the Docker build context] *************
-changed: [ubuntu_deploy]
-
-TASK [Deploy the Compose environment file] *************************************
+TASK [Create deployment environment file] **************************************
 ok: [ubuntu_deploy]
 
-TASK [Deploy the Docker Compose file] ******************************************
+TASK [Check whether database password already exists] **************************
 ok: [ubuntu_deploy]
 
-TASK [Check whether the database password already exists] **********************
-ok: [ubuntu_deploy]
-
-TASK [Generate a database password] ********************************************
+TASK [Generate database password] **********************************************
 skipping: [ubuntu_deploy]
 
-TASK [Write the database password file securely] *******************************
+TASK [Create database password file] *******************************************
 skipping: [ubuntu_deploy]
 
-TASK [Enforce database password ownership and permissions] *********************
+TASK [Enforce database password permissions] ***********************************
 ok: [ubuntu_deploy]
 
 TASK [Validate Docker Compose configuration] ***********************************
 ok: [ubuntu_deploy]
 
-TASK [Deploy database and backend with Docker Compose] *************************
+TASK [Pull MariaDB and Nginx images] *******************************************
 changed: [ubuntu_deploy]
 
-TASK [Test the backend from inside its container] ******************************
-ok: [ubuntu_deploy]
-
-TASK [Read application container status] ***************************************
-ok: [ubuntu_deploy]
-
-TASK [Display application verification results] ********************************
+TASK [Display image pull output] ***********************************************
 ok: [ubuntu_deploy] => {
     "msg": [
-        "Backend test: HTTP status: 200\n<div>Hello Blog post #1</div><div>Hello Blog post #2</div><div>Hello Blog post #3</div><div>Hello Blog post #4</div>",
-        "NAME                          IMAGE                           COMMAND                  SERVICE   CREATED          STATUS                    PORTS\nnginx-flask-mysql-backend-1   nginx-flask-mysql-backend:1.0   \"gunicorn --bind=0.0…\"   backend   40 seconds ago   Up 16 seconds (healthy)   8000/tcp\nnginx-flask-mysql-db-1        mariadb:10.11.18-jammy          \"docker-entrypoint.s…\"   db        41 seconds ago   Up 39 seconds (healthy)   3306/tcp"
+        "",
+        " Image mariadb:10.11.18-jammy Pulling \n Image nginx:1.30.4-alpine Pulling \n Image mariadb:10.11.18-jammy Pulled \n Image nginx:1.30.4-alpine Pulled "
     ]
 }
 
+TASK [Build backend image] *****************************************************
+changed: [ubuntu_deploy]
+
+TASK [Display backend build output] ********************************************
+ok: [ubuntu_deploy] => {
+    "msg": [
+        "#1 [internal] load local bake definitions\n#1 reading from stdin 527B done\n#1 DONE 0.0s\n\n#2 [internal] load build definition from Dockerfile\n#2 transferring dockerfile: 1.13kB 0.0s done\n#2 DONE 0.0s\n\n#3 resolve image config for docker-image://docker.io/docker/dockerfile:1\n#3 DONE 1.2s\n\n#4 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32\n#4 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 0.1s done\n#4 CACHED\n\n#5 [internal] load metadata for docker.io/library/python:3.12-slim-bookworm\n#5 DONE 1.4s\n\n#6 [internal] load .dockerignore\n#6 transferring context: 218B 0.0s done\n#6 DONE 0.1s\n\n#7 [internal] load build context\n#7 transferring context: 96B 0.0s done\n#7 DONE 0.1s\n\n#8 [builder 1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:a116514e19457bcb7af7efe9c3dd0b9b71e85b317694e7882a1c52aa15a78134\n#8 resolve docker.io/library/python:3.12-slim-bookworm@sha256:a116514e19457bcb7af7efe9c3dd0b9b71e85b317694e7882a1c52aa15a78134 0.2s done\n#8 DONE 0.2s\n\n#9 [runtime 5/7] COPY app/requirements.txt ./requirements.txt\n#9 CACHED\n\n#10 [runtime 6/7] RUN python -m pip install     --no-cache-dir     --no-index     --find-links=/wheels     --requirement requirements.txt     && rm -rf /wheels\n#10 CACHED\n\n#11 [runtime 2/7] RUN groupadd         --gid 10001         appgroup     && useradd         --uid 10001         --gid 10001         --home-dir /app         --no-create-home         --no-log-init         --shell /usr/sbin/nologin         appuser\n#11 CACHED\n\n#12 [runtime 3/7] WORKDIR /app\n#12 CACHED\n\n#13 [builder 2/4] WORKDIR /build\n#13 CACHED\n\n#14 [builder 4/4] RUN python -m pip wheel     --wheel-dir /wheels     --requirement requirements.txt\n#14 CACHED\n\n#15 [runtime 4/7] COPY --from=builder /wheels /wheels\n#15 CACHED\n\n#16 [builder 3/4] COPY app/requirements.txt ./requirements.txt\n#16 CACHED\n\n#17 [runtime 7/7] COPY --chown=appuser:appgroup app/hello.py ./hello.py\n#17 CACHED\n\n#18 exporting to image\n#18 exporting layers 0.0s done\n#18 exporting manifest sha256:51123521149082b3c2f334fcd3998dbbdba7ec3b2a96f164203275332bb1a3ab 0.0s done\n#18 exporting config sha256:f9598c9dac2b573d7ae6a9dc7b09d24a03c8d4538e80bac53682931e63351aaf 0.0s done\n#18 exporting attestation manifest sha256:d9e3514891fb3f605d39f636c180267bf33f822e9cf331928b9db67e0b7eeb0c\n#18 exporting attestation manifest sha256:d9e3514891fb3f605d39f636c180267bf33f822e9cf331928b9db67e0b7eeb0c 0.1s done\n#18 exporting manifest list sha256:2d7f7d7eff0b6961dc11df54f6e2e849f4a4d3e809ff54f2eee0a17ac4a6fb93 0.0s done\n#18 naming to docker.io/library/nginx-flask-mysql-backend:1.0\n#18 naming to docker.io/library/nginx-flask-mysql-backend:1.0 0.0s done\n#18 unpacking to docker.io/library/nginx-flask-mysql-backend:1.0 0.0s done\n#18 DONE 0.4s\n\n#19 resolving provenance for metadata file\n#19 DONE 0.1s",
+        " Image nginx-flask-mysql-backend:1.0 Building \n Image nginx-flask-mysql-backend:1.0 Built "
+    ]
+}
+
+TASK [Check bootstrap Nginx Compose file] **************************************
+ok: [ubuntu_deploy]
+
+TASK [Stop and remove bootstrap Nginx container] *******************************
+changed: [ubuntu_deploy]
+
+TASK [Start final application stack] *******************************************
+[ERROR]: Task failed: Module failed: The command exited with a non-zero return code.
+Origin: /home/nimarasouli/Desktop/devops_project/05_deployment/deploy.yml:231:7
+
+229       changed_when: true
+230
+231     - name: Start final application stack
+          ^ column 7
+
+fatal: [ubuntu_deploy]: FAILED! => {"changed": true, "changed_when_result": true, "cmd": ["docker", "compose", "--env-file", ".env", "-f", "docker-compose.yml", "up", "--detach", "--wait", "--wait-timeout", "180", "--remove-orphans"], "delta": "0:00:02.408267", "end": "2026-08-24 10:35:59.884851", "msg": "The command exited with a non-zero return code.", "rc": 1, "start": "2026-08-24 10:35:57.476584", "stderr": " Container nginx-flask-mysql-db-1 Running \n Container nginx-flask-mysql-backend-1 Running \n Container nginx-flask-mysql-db-1 Waiting \n Container nginx-flask-mysql-db-1 Healthy \n Container nginx-flask-mysql-backend-1 Waiting \n Container nginx-flask-mysql-backend-1 Error dependency backend failed to start\ndependency failed to start: container nginx-flask-mysql-backend-1 is unhealthy", "stderr_lines": [" Container nginx-flask-mysql-db-1 Running ", " Container nginx-flask-mysql-backend-1 Running ", " Container nginx-flask-mysql-db-1 Waiting ", " Container nginx-flask-mysql-db-1 Healthy ", " Container nginx-flask-mysql-backend-1 Waiting ", " Container nginx-flask-mysql-backend-1 Error dependency backend failed to start", "dependency failed to start: container nginx-flask-mysql-backend-1 is unhealthy"], "stdout": "", "stdout_lines": []}
+
 PLAY RECAP *********************************************************************
-ubuntu_deploy              : ok=20   changed=3    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+ubuntu_deploy              : ok=16   changed=3    unreachable=0    failed=1    skipped=2    rescued=0    ignored=0   
 
