@@ -1,0 +1,14 @@
+========================================
+Nginx Domain Access Test Results
+========================================
+
+Generated at: 2026-08-24T09:35:38-04:00
+Server IP: 192.168.1.104
+Domain: myapp.test
+
+===== Hosts Resolution Test =====
+192.168.1.109   myapp.test
+192.168.1.104   myapp.test
+
+===== Nginx Health Endpoint =====
+curl: (7) Failed to connect to myapp.test port 80 after 3111 ms: Could not connect to server

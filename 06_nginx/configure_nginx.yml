@@ -1,0 +1,146 @@
+---
+- name: Configure containerized Nginx reverse proxy
+  hosts: deployment_servers
+  become: true
+  gather_facts: false
+
+  vars:
+    deployment_dir: /opt/nginx-flask-mysql
+    deployment_user: rahmati
+    deployment_group: rahmati
+    application_domain: myapp.test
+
+  tasks:
+    - name: Verify deployment directory exists
+      ansible.builtin.stat:
+        path: "{{ deployment_dir }}/docker-compose.yml"
+      register: deployment_compose_file
+
+    - name: Stop when the application has not been deployed
+      ansible.builtin.assert:
+        that:
+          - deployment_compose_file.stat.exists
+        fail_msg: >-
+          The application Compose file was not found at
+          {{ deployment_dir }}/docker-compose.yml.
+          Complete deployment stage 5 before configuring Nginx.
+
+    - name: Copy Nginx configuration to deployment server
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/nginx_config.txt"
+        dest: "{{ deployment_dir }}/nginx/default.conf"
+        owner: "{{ deployment_user }}"
+        group: "{{ deployment_group }}"
+        mode: "0644"
+        backup: true
+
+    - name: Validate Compose configuration
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - config
+          - --quiet
+        chdir: "{{ deployment_dir }}"
+      changed_when: false
+
+    - name: Test new Nginx configuration with a temporary Compose container
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - run
+          - --rm
+          - --no-deps
+          - proxy
+          - nginx
+          - -t
+        chdir: "{{ deployment_dir }}"
+      register: temporary_nginx_test
+      changed_when: false
+
+    - name: Display temporary Nginx configuration test
+      ansible.builtin.debug:
+        msg:
+          - "{{ temporary_nginx_test.stdout | default('') }}"
+          - "{{ temporary_nginx_test.stderr | default('') }}"
+
+    - name: Recreate Nginx proxy container with the new configuration
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - up
+          - --detach
+          - --force-recreate
+          - --no-deps
+          - proxy
+        chdir: "{{ deployment_dir }}"
+      register: proxy_recreate
+      changed_when: true
+
+    - name: Wait for the HTTP port
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 80
+        state: started
+        timeout: 60
+
+    - name: Test active Nginx configuration
+      ansible.builtin.command:
+        argv:
+          - docker
+          - compose
+          - --env-file
+          - .env
+          - -f
+          - docker-compose.yml
+          - exec
+          - -T
+          - proxy
+          - nginx
+          - -t
+        chdir: "{{ deployment_dir }}"
+      register: active_nginx_test
+      changed_when: false
+
+    - name: Test Nginx health endpoint
+      ansible.builtin.uri:
+        url: http://127.0.0.1/nginx-health
+        method: GET
+        headers:
+          Host: "{{ application_domain }}"
+        status_code: 200
+        return_content: true
+      register: nginx_health_test
+
+    - name: Test reverse proxy application response
+      ansible.builtin.uri:
+        url: http://127.0.0.1/
+        method: GET
+        headers:
+          Host: "{{ application_domain }}"
+        status_code: 200
+        return_content: true
+      register: application_proxy_test
+
+    - name: Display Nginx verification results
+      ansible.builtin.debug:
+        msg:
+          - "Nginx config test: {{ active_nginx_test.stderr | default(active_nginx_test.stdout) }}"
+          - "Nginx health status: {{ nginx_health_test.status }}"
+          - "Nginx health response: {{ nginx_health_test.content | trim }}"
+          - "Application proxy status: {{ application_proxy_test.status }}"
+          - "Application response: {{ application_proxy_test.content }}"

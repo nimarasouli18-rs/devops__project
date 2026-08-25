@@ -1,0 +1,52 @@
+
+PLAY [Configure containerized Nginx reverse proxy] *****************************
+
+TASK [Verify deployment directory exists] **************************************
+ok: [ubuntu_deploy]
+
+TASK [Stop when the application has not been deployed] *************************
+ok: [ubuntu_deploy] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Copy Nginx configuration to deployment server] ***************************
+ok: [ubuntu_deploy]
+
+TASK [Validate Compose configuration] ******************************************
+ok: [ubuntu_deploy]
+
+TASK [Test new Nginx configuration with a temporary Compose container] *********
+ok: [ubuntu_deploy]
+
+TASK [Display temporary Nginx configuration test] ******************************
+ok: [ubuntu_deploy] => {
+    "msg": [
+        "/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration\n/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/\n/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh\n10-listen-on-ipv6-by-default.sh: info: /etc/nginx/conf.d/default.conf is not a file or does not exist\n/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh\n/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh\n/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh\n/docker-entrypoint.sh: Configuration complete; ready for start up",
+        " Container nginx-flask-mysql-proxy-run-ac5acd3653ff Creating \n Container nginx-flask-mysql-proxy-run-ac5acd3653ff Created \nnginx: the configuration file /etc/nginx/nginx.conf syntax is ok\nnginx: configuration file /etc/nginx/nginx.conf test is successful"
+    ]
+}
+
+TASK [Recreate Nginx proxy container with the new configuration] ***************
+changed: [ubuntu_deploy]
+
+TASK [Wait for the HTTP port] **************************************************
+ok: [ubuntu_deploy]
+
+TASK [Test active Nginx configuration] *****************************************
+ok: [ubuntu_deploy]
+
+TASK [Test Nginx health endpoint] **********************************************
+[ERROR]: Task failed: Module failed: Status code was -1 and not [200]: Connection failure: [Errno 104] Connection reset by peer
+Origin: /home/nimarasouli/Desktop/devops_project/06_nginx/configure_nginx.yml:119:7
+
+117       changed_when: false
+118
+119     - name: Test Nginx health endpoint
+          ^ column 7
+
+fatal: [ubuntu_deploy]: FAILED! => {"changed": false, "content": "", "elapsed": 0, "msg": "Status code was -1 and not [200]: Connection failure: [Errno 104] Connection reset by peer", "redirected": false, "status": -1, "url": "http://127.0.0.1/nginx-health"}
+
+PLAY RECAP *********************************************************************
+ubuntu_deploy              : ok=9    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+
